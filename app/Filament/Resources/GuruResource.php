@@ -3,8 +3,8 @@
 namespace App\Filament\Resources;
 
 use Filament\Forms;
+use App\Models\Guru;
 use Filament\Tables;
-use App\Models\Siswa;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
@@ -12,29 +12,27 @@ use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Columns\SelectColumn;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\SiswaResource\Pages;
+use App\Filament\Resources\GuruResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\SiswaResource\RelationManagers;
+use App\Filament\Resources\GuruResource\RelationManagers;
 use Filament\Forms\Components\Textarea;
 
-class SiswaResource extends Resource
+class GuruResource extends Resource
 {
-    protected static ?string $model = Siswa::class;
+    protected static ?string $model = Guru::class;
     protected static ?int $navigationSort = 2; 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                
                 TextInput::make('nama')
                 ->label('Nama Lengkap')
                 ->autocapitalize('words'),
-                TextInput::make('nis')
-                ->label('Nomor Induk Siswa'),
+                TextInput::make('nip')
+                ->label('Nomor Induk Pegawai'),
                 // ->disabled(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord), untuk disable edit
                 Select::make('jenis_kelamin')
                 ->label('Jenis Kelamin')
@@ -53,11 +51,11 @@ class SiswaResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('nama')
-                ->label('Nama Lengkap')
                 ->sortable()
-                ->searchable(),
-                TextColumn::make('nis')
-                ->label('Nomor Induk Siswa'),
+                ->searchable()
+                ->label('Nama Lengkap'),
+                TextColumn::make('nip')
+                ->label('Nomor Induk Pegawai'),
                 TextColumn::make('jenis_kelamin')
                 ->label('Jenis Kelamin'),
                 TextColumn::make('tgl_lahir')
@@ -89,9 +87,9 @@ class SiswaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSiswas::route('/'),
-            'create' => Pages\CreateSiswa::route('/create'),
-            'edit' => Pages\EditSiswa::route('/{record}/edit'),
+            'index' => Pages\ListGurus::route('/'),
+            'create' => Pages\CreateGuru::route('/create'),
+            'edit' => Pages\EditGuru::route('/{record}/edit'),
         ];
     }
 }

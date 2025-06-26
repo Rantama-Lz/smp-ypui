@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Siswa;
+use App\Models\Guru;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class SiswaSeeder extends Seeder
+class GuruSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +14,6 @@ class SiswaSeeder extends Seeder
     public function run(): void
     {
         //call factory
-        Siswa::factory(10)->create();
+        Guru::factory(10)->create();
     }
 }

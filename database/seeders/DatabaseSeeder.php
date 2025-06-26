@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Kelas;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -20,11 +21,13 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
         User::factory()->create([
-            'name' => 'Admin',
+            'name' => 'Admin SMP YPUI',
             'email' => 'adminsmpypui@gmail.com',
         ]);
         $this->call([
-            SiswaSeeder::class
+            SiswaSeeder::class,
+            GuruSeeder::class,
+            KelasSeeder::class,
         ]);
     }
 }
