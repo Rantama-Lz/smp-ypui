@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('kelas', function (Blueprint $table) {
             $table->id();
-            // $table->guru_id();
-            // $table->tahun_ajaran_id();
+            // $table->foreign('guru_id')->references('id')->on('gurus')->onUpdate('cascade')->onDelete('cascade');
+            // $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('guru_id');
+            $table->unsignedBigInteger('tahun_ajaran_id');
             $table->string('nama_kelas');
             $table->timestamps();
         });

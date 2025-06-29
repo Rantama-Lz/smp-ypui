@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Spp extends Model
 {
-    //
+    protected $guarded = [];
 }

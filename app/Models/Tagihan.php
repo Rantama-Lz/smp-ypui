@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tagihan extends Model
 {
-    //
+    protected $guarded = [];
 }

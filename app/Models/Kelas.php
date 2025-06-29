@@ -9,7 +9,12 @@ class Kelas extends Model
 {
     /** @use HasFactory<\Database\Factories\KelasFactory> */
     use HasFactory;
-    protected $fillable = [
-        'nama_kelas',
-    ];
+    protected $guarded = [];
+
+    public function guru(){
+        return $this->belongsTo(Guru::class, 'guru_id', 'id');
+    }
+    public function tahunajaran(){
+        return $this->belongsTo(TahunAjaran::class, 'tahun_ajaran_id', 'id');
+    }
 }

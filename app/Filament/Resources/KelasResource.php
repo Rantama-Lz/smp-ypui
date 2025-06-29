@@ -8,6 +8,8 @@ use App\Models\Kelas;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,9 +28,11 @@ class KelasResource extends Resource
         return $form
             ->schema([
                 TextInput::make('nama_kelas')
-                ->autocapitalize('words')
+                ->required()
                 ->label('Nama Kelas'),
-            ]);
+                TextInput::make('guru_id'),
+                TextInput::make('tahun_ajaran_id'),
+                ]);
     }
 
     public static function table(Table $table): Table
@@ -38,6 +42,12 @@ class KelasResource extends Resource
                 TextColumn::make('nama_kelas')
                 ->searchable()
                 ->label('Nama Kelas'),
+                TextColumn::make('guru_id')
+                ->searchable()
+                ->label('Nama Guru'),
+                TextColumn::make('tahun_ajaran_id')
+                ->searchable()
+                ->label('Tahun Ajaran'),
             ])
             ->filters([
                 //

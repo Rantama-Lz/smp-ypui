@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->string('nip')->unique();
-            $table->string('jenis_kelamin');
+            $table->enum('jenis_kelamin', ['Laki-Laki', 'Perempuan']);
             $table->date('tgl_lahir');
             $table->text('alamat');
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
     }

@@ -8,12 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Guru extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'nama',
-        'nip',
-        'jenis_kelamin',
-        'alamat',
-        'agama',
-        'tgl_lahir',
-    ];
+    protected $guarded = [];
+
+     public function kelas(){
+        return $this->hasMany(Kelas::class, 'kelas_id', 'id');
+    }
 }
