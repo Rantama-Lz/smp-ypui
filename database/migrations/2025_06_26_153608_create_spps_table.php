@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tahun_ajarans', function (Blueprint $table) {
+        Schema::create('spps', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_tahun');
-            $table->enum('semester', ['Ganjil', 'Genap']);
-            $table->boolean('active')->default(2);
+            $table->foreignId('tahun_ajaran_id')->constrained()->cascadeOnDelete();
+            $table->enum('bulan', ['Januari', 'Februari', 'Maret', 'April','Mei', 'Juni', 'Juli', 'Agustus','September', 'Oktober', 'November', 'Desember']);
+            $table->string('nominal');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tahun_ajarans');
+        Schema::dropIfExists('spps');
     }
 };

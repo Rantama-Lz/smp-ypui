@@ -36,6 +36,12 @@ class DashboardPanelProvider extends PanelProvider
                 'success' => Color::Indigo,
                 'warning' => Color::Orange,
             ])
+            ->navigationGroups([
+            'Dashboard',
+            'Manajemen Data Pengguna',
+            'Manajemen Akademik',
+            'Manajemen Keuangan',
+            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([

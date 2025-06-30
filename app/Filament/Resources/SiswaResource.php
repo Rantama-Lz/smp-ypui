@@ -27,7 +27,7 @@ use App\Filament\Resources\SiswaResource\RelationManagers;
 class SiswaResource extends Resource
 {
     protected static ?string $model = Siswa::class;
-    protected static ?int $navigationSort = 2; 
+    protected static ?string $navigationGroup = 'Manajemen Data Pengguna';
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     public static function form(Form $form): Form
@@ -37,7 +37,7 @@ class SiswaResource extends Resource
                 TextInput::make('nama')
                 ->label('Nama Lengkap')
                 ->required()
-                ->autocapitalize('words'),
+                ->formatStateUsing(fn($state): string => str()->headline($state)),
                 TextInput::make('nis')
                 ->required()
                 ->label('Nomor Induk Siswa'),
@@ -56,6 +56,7 @@ class SiswaResource extends Resource
                 ->required(),
                 FileUpload::make('foto')
                 ->directory('siswa'),
+                
             ]);
     }
 
@@ -63,7 +64,7 @@ class SiswaResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nomor')->state(
+                TextColumn::make('no')->state(
                 static function (HasTable $livewire, stdClass $rowLoop): string {
                 return (string) (
                 $rowLoop->iteration +
@@ -75,17 +76,33 @@ class SiswaResource extends Resource
                 ),
                 TextColumn::make('nama')
                 ->label('Nama Lengkap')
+                ->formatStateUsing(fn($state): string => str()->headline($state))
                 ->sortable()
                 ->searchable(),
                 TextColumn::make('nis')
+                ->toggleable(isToggledHiddenByDefault: false)
+                ->searchable()
                 ->label('Nomor Induk Siswa'),
                 TextColumn::make('jenis_kelamin')
+                ->sortable()
                 ->label('Jenis Kelamin'),
                 TextColumn::make('tgl_lahir')
+                ->toggleable(isToggledHiddenByDefault: false)
                 ->label('Tanggal Lahir'),
                 TextColumn::make('alamat')
                 ->toggleable(isToggledHiddenByDefault: true),
-                ImageColumn::make('foto'),
+                ImageColumn::make('foto')
+                ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->label('Dibuat pada')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->label('Diperbarui pada')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
@@ -95,6 +112,7 @@ class SiswaResource extends Resource
                 Tables\Actions\DeleteAction::make()
             ])
             ->defaultSort('nama', 'asc')
+            ->paginated([10, 25, 50, 100])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

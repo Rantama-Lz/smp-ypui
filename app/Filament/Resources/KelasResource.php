@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -20,8 +21,8 @@ use App\Filament\Resources\KelasResource\RelationManagers;
 class KelasResource extends Resource
 {
     protected static ?string $model = Kelas::class;
-    protected static ?int $navigationSort = 3; 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Manajemen Akademik';
+    protected static ?string $navigationIcon = 'heroicon-o-building-library';
 
     public static function form(Form $form): Form
     {
@@ -30,8 +31,14 @@ class KelasResource extends Resource
                 TextInput::make('nama_kelas')
                 ->required()
                 ->label('Nama Kelas'),
-                TextInput::make('guru_id'),
-                TextInput::make('tahun_ajaran_id'),
+                Select::make('guru_id')
+                ->required()
+                ->label('Walikelas')
+                ->relationship('guru','nama'),
+                Select::make('tahun_ajaran_id')
+                ->required()
+                ->label('Tahun Ajaran')
+                ->relationship('tahunajaran','nama_tahun'),
                 ]);
     }
 
@@ -42,12 +49,22 @@ class KelasResource extends Resource
                 TextColumn::make('nama_kelas')
                 ->searchable()
                 ->label('Nama Kelas'),
-                TextColumn::make('guru_id')
+                TextColumn::make('guru.nama')
                 ->searchable()
                 ->label('Nama Guru'),
-                TextColumn::make('tahun_ajaran_id')
+                TextColumn::make('tahunajaran.nama_tahun')
                 ->searchable()
                 ->label('Tahun Ajaran'),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->label('Dibuat pada')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->label('Diperbarui pada')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

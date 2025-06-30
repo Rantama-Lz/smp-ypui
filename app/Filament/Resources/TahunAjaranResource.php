@@ -22,8 +22,8 @@ class TahunAjaranResource extends Resource
 {
     protected static ?string $model = TahunAjaran::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?int $navigationSort = 4; 
+    protected static ?string $navigationIcon = 'heroicon-o-calendar';
+    protected static ?string $navigationGroup = 'Manajemen Akademik';
     public static function form(Form $form): Form
     {
         return $form
@@ -48,18 +48,22 @@ class TahunAjaranResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('nama_tahun')
+                    ->label('Nama Tahun Ajaran')
                     ->searchable(),
                 TextColumn::make('semester')
                     ->searchable(),
                 IconColumn::make('active')
+                    ->label('Aktif')
                     ->boolean(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
+                    ->label('Dibuat pada')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
+                    ->label('Diperbarui pada')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

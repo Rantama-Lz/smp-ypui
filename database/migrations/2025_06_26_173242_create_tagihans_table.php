@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('tagihans', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('spp_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('siswa_id')->constrained()->cascadeOnDelete();
+            $table->enum('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']);
+            $table->string('buktibayar');
+            $table->enum('status', ['Pending','Berhasil', 'Ditolak'])->default('Pending');
             $table->timestamps();
         });
     }

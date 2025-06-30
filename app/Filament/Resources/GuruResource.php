@@ -25,7 +25,7 @@ use App\Filament\Resources\GuruResource\RelationManagers;
 class GuruResource extends Resource
 {
     protected static ?string $model = Guru::class;
-    protected static ?int $navigationSort = 2; 
+    protected static ?string $navigationGroup = 'Manajemen Data Pengguna';
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function form(Form $form): Form
@@ -34,12 +34,11 @@ class GuruResource extends Resource
             ->schema([
                 TextInput::make('nama')
                 ->required()
-                ->label('Nama Lengkap')
-                ->autocapitalize('words'),
+                ->formatStateUsing(fn($state): string => str()->headline($state))
+                ->label('Nama Lengkap'),
                 TextInput::make('nip')
                 ->required()
                 ->label('Nomor Induk Pegawai'),
-                // ->disabled(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord), untuk disable edit
                 Select::make('jenis_kelamin')
                 ->label('Jenis Kelamin')
                 ->required()
@@ -54,6 +53,7 @@ class GuruResource extends Resource
                 ->required(),
                 FileUpload::make('foto')
                 ->directory('guru'),
+                // ->disabled(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord), untuk disable edit
             ]);
     }
 
@@ -61,7 +61,7 @@ class GuruResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nomor')->state(
+                TextColumn::make('no')->state(
                 static function (HasTable $livewire, stdClass $rowLoop): string {
                 return (string) (
                 $rowLoop->iteration +
@@ -74,17 +74,31 @@ class GuruResource extends Resource
                 TextColumn::make('nama')
                 ->sortable()
                 ->searchable()
+                ->formatStateUsing(fn($state): string => str()->headline($state))
                 ->label('Nama Lengkap'),
                 TextColumn::make('nip')
-                ->label('Nomor Induk Pegawai')
-                ->searchable(),
+                ->searchable()
+                ->toggleable(isToggledHiddenByDefault: false)
+                ->label('Nomor Induk Pegawai'),
                 TextColumn::make('jenis_kelamin')
                 ->label('Jenis Kelamin'),
                 TextColumn::make('tgl_lahir')
+                ->toggleable(isToggledHiddenByDefault: false)
                 ->label('Tanggal Lahir'),
                 TextColumn::make('alamat')
                 ->toggleable(isToggledHiddenByDefault: true),
-                ImageColumn::make('foto'),
+                ImageColumn::make('foto')
+                ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->label('Dibuat pada')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->label('Diperbarui pada')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
@@ -94,6 +108,7 @@ class GuruResource extends Resource
                 Tables\Actions\DeleteAction::make()
             ])
             ->defaultSort('nama', 'asc')
+            ->paginated([10, 25, 50, 100])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
