@@ -29,16 +29,13 @@ class TahunAjaranResource extends Resource
         return $form
             ->schema([
                 TextInput::make('nama_tahun')
-                    ->required()
-                    ->maxLength(255),
-                Select::make('semester')
-                ->required()
-                ->label('Semester')
-                ->options([
-                    'Ganjil' => 'Ganjil',
-                    'Genap' => 'Genap',
-                    ]),
+                    ->label('Nama Tahun Ajaran')
+                    ->placeholder('2025/2026')
+                    ->maxLength('9')
+                    ->required(),
+
                 Toggle::make('active')
+                    ->label('Status Aktif')
                     ->required(),
             ]);
     }
@@ -50,10 +47,8 @@ class TahunAjaranResource extends Resource
                 TextColumn::make('nama_tahun')
                     ->label('Nama Tahun Ajaran')
                     ->searchable(),
-                TextColumn::make('semester')
-                    ->searchable(),
                 IconColumn::make('active')
-                    ->label('Aktif')
+                    ->label('Status Aktif')
                     ->boolean(),
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -66,6 +61,7 @@ class TahunAjaranResource extends Resource
                     ->label('Diperbarui pada')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('nama_tahun', 'asc')
             ->filters([
                 //
             ])

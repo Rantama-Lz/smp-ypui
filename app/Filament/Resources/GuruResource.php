@@ -34,12 +34,17 @@ class GuruResource extends Resource
             ->schema([
                 TextInput::make('nama')
                 ->required()
+                ->placeholder('Nama Lengkap')
                 ->formatStateUsing(fn($state): string => str()->headline($state))
-                ->label('Nama Lengkap'),
+                ->label('Nama'),
                 TextInput::make('nip')
+                ->placeholder('NIP terdiri dari 18 digit angka')
+                ->maxLength(18)
+                ->minLength(18)
                 ->required()
                 ->label('Nomor Induk Pegawai'),
                 Select::make('jenis_kelamin')
+                ->placeholder('Pilih Jenis Kelamin')
                 ->label('Jenis Kelamin')
                 ->required()
                 ->options([
@@ -50,8 +55,10 @@ class GuruResource extends Resource
                 ->required()
                 ->label('Tanggal Lahir'),
                 Textarea::make('alamat')
+                ->placeholder('Jl. Praja Lapangan No.8, RT.04/RW.01, Kebayoran Lama Selatan, Kebayoran Lama, Jakarta Selatan')
                 ->required(),
                 FileUpload::make('foto')
+                ->label('Foto Profil')
                 ->directory('guru'),
                 // ->disabled(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord), untuk disable edit
             ]);

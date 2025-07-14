@@ -35,7 +35,8 @@ class SiswaResource extends Resource
         return $form
             ->schema([
                 TextInput::make('nama')
-                ->label('Nama Lengkap')
+                ->placeholder('Nama Lengkap')
+                ->label('Nama')
                 ->required()
                 ->formatStateUsing(fn($state): string => str()->headline($state)),
                 TextInput::make('nis')
@@ -43,6 +44,7 @@ class SiswaResource extends Resource
                 ->label('Nomor Induk Siswa'),
                     // ->disabled(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord), untuk disable edit
                 Select::make('jenis_kelamin')
+                ->placeholder('Pilih Jenis Kelamin')
                 ->required()
                 ->label('Jenis Kelamin')
                 ->options([
@@ -53,8 +55,10 @@ class SiswaResource extends Resource
                 ->required()
                 ->label('Tanggal Lahir'),
                 Textarea::make('alamat')
+                ->placeholder('Jl. Praja Lapangan No.8, RT.04/RW.01, Kebayoran Lama Selatan, Kebayoran Lama, Jakarta Selatan')
                 ->required(),
                 FileUpload::make('foto')
+                ->label('Foto Profil')
                 ->directory('siswa'),
                 
             ]);

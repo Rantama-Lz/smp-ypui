@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tahun_ajarans', function (Blueprint $table) {
+        Schema::create('tingkat_kelas', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_tahun');
-            $table->enum('semester', ['Ganjil', 'Genap']);
-            $table->boolean('active')->default(true);
+            $table->string('kelas');
             $table->timestamps();
         });
     }
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tahun_ajarans');
+        Schema::dropIfExists('tingkat_kelas');
     }
 };

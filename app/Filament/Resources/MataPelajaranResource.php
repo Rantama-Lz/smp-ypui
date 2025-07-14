@@ -26,14 +26,24 @@ class MataPelajaranResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('nama_mapel')
-                ->label('Nama Mata Pelajaran')
+                Select::make('tingkat_kelas_id')
                 ->required()
-                ->maxLength(255),
+                ->placeholder('Pilih Kelas')
+                ->label('Kelas')
+                ->relationship('tingkatkelas','kelas'),
+                Select::make('mapel_master_id')
+                ->required()
+                ->label('Nama Mata Pelajaran')
+                ->placeholder('Pilih Mata Pelajaran')
+                ->relationship('master','nama_mapel'),
                 Select::make('guru_id')
                 ->required()
                 ->label('Guru Pengajar')
                 ->relationship('guru','nama'),
+                Select::make('tahun_ajaran_id')
+                ->required()
+                ->label('Tahun Ajaran')
+                ->relationship('tahunajaran','nama_tahun'),
             ]);
     }
 
@@ -41,11 +51,19 @@ class MataPelajaranResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nama_mapel')
+                TextColumn::make('master.nama_mapel')
                 ->label('Nama Mata Pelajaran')
                 ->searchable(),
+                TextColumn::make('tingkatkelas.kelas')
+                ->searchable()
+                ->label('Kelas'),
                 TextColumn::make('guru.nama')
+                ->searchable()
+                ->label('Guru Pengajar')
                 ->numeric()
+                ->sortable(),
+                TextColumn::make('tahunajaran.nama_tahun')
+                ->label('Tahun Ajaran')
                 ->sortable(),
                 TextColumn::make('created_at')
                 ->dateTime()

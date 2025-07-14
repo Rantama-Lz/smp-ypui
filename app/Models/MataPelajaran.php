@@ -10,4 +10,21 @@ class MataPelajaran extends Model
     public function guru(){
         return $this->belongsTo(Guru::class, 'guru_id', 'id');
     }
+    public function nilai()
+    {
+        return $this->hasMany(Nilai::class, 'nilai_id', 'id');
+    }
+
+    public function tingkatkelas()
+    {
+        return $this->belongsTo(TingkatKelas::class, 'tingkat_kelas_id', 'id');
+    }
+
+    public function tahunajaran() 
+    {
+    return $this->belongsTo(TahunAjaran::class, 'tahun_ajaran_id' , 'id');
+    }
+    public function master() {
+    return $this->belongsTo(MapelMaster::class, 'mapel_master_id');
+}
 }

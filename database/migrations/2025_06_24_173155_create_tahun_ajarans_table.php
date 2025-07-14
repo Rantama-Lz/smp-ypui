@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pembayarans', function (Blueprint $table) {
+        Schema::create('tahun_ajarans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tagihan_id')->constrained()->cascadeOnDelete();
-            $table->date('tanggal_bayar');
-            $table->string('jumlah_bayar');
-            $table->string('buktibayar');
-            $table->enum('metode_bayar', ['Cash','Transfer']);
+            $table->string('nama_tahun')->unique();
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pembayarans');
+        Schema::dropIfExists('tahun_ajarans');
     }
 };

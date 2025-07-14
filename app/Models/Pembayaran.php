@@ -9,6 +9,13 @@ class Pembayaran extends Model
     protected $guarded = [];
 
     public function tagihan(){
-        return $this->belongsTo(Tagihan::class, 'tagihan_id', 'id');
+        return $this->belongsTo(Tagihan::class);
     }
+    public function validator()
+{
+    return $this->belongsTo(User::class, 'validated_by');
+}
+    // public function siswa(){
+    //     return $this->belongsTo(Siswa::class, 'siswa_id', 'id');
+    // }
 }

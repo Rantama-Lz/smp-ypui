@@ -9,4 +9,8 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateTagihan extends CreateRecord
 {
     protected static string $resource = TagihanResource::class;
+    public function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

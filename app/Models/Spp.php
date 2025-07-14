@@ -11,4 +11,9 @@ class Spp extends Model
     public function tahunajaran(){
         return $this->belongsTo(TahunAjaran::class, 'tahun_ajaran_id', 'id');
     }
+
+    public function tagihan()
+    {
+        return $this->hasMany(Tagihan::class , 'tagihan_id', 'id');
+    }
 }

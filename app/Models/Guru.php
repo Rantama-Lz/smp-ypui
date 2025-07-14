@@ -10,7 +10,16 @@ class Guru extends Model
     use HasFactory;
     protected $guarded = [];
 
-     public function kelas(){
+     public function kelas()
+    {
         return $this->hasMany(Kelas::class, 'kelas_id', 'id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+    public function mapel()
+    {
+        return $this->hasMany(MataPelajaran::class, 'mapel_id', 'id');
     }
 }

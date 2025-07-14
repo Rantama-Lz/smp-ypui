@@ -17,4 +17,12 @@ class Kelas extends Model
     public function tahunajaran(){
         return $this->belongsTo(TahunAjaran::class, 'tahun_ajaran_id', 'id');
     }
+
+    public function tingkatkelas(){
+        return $this->belongsTo(TingkatKelas::class, 'tingkat_kelas_id', 'id');
+    }
+    // public function siswaKelas()
+    // {
+    //     return $this->hasMany(SiswaKelas::class);
+    // }
 }

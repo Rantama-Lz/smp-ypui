@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Kelas;
+use App\Models\MapelMaster;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -27,9 +28,12 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SiswaSeeder::class,
             GuruSeeder::class,
+            MapelMasterSeeder::class,
+            TingkatKelasSeeder::class,
             TahunAjaranSeeder::class,
             KelasSeeder::class,
-            
+            MataPelajaranSeeder::class,
+            SiswaKelasSeeder::class
         ]);
     }
 }

@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SppResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -29,9 +30,11 @@ class SppResource extends Resource
             ->schema([
                 Select::make('tahun_ajaran_id')
                 ->required()
+                ->placeholder('Pilih Tahun Ajaran')
                 ->label('Tahun Ajaran')
                 ->relationship('tahunajaran','nama_tahun'),
                 Select::make('bulan')
+                ->placeholder('Pilih Bulan')
                 ->label('Bulan')
                 ->required()
                 ->options([
@@ -49,8 +52,9 @@ class SppResource extends Resource
                     'Desember' => 'Desember'
                 ]),
                 TextInput::make('nominal')
-                ->required()
-                ->maxLength(255),
+                    ->label('Nominal')
+                    ->numeric()
+                    ->required(),
             ]);
     }
 
@@ -60,11 +64,13 @@ class SppResource extends Resource
             ->columns([
                 TextColumn::make('tahunajaran.nama_tahun')
                 ->label('Tahun Ajaran')
-                ->numeric()
                 ->sortable(),
-                TextColumn::make('bulan'),
+                TextColumn::make('bulan')
+                ->searchable()
+                ->sortable(),
                 TextColumn::make('nominal')
-                ->searchable(),
+                ->label('Nominal')
+                ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
                 TextColumn::make('created_at')
                 ->dateTime()
                 ->sortable()
@@ -75,7 +81,8 @@ class SppResource extends Resource
                 ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('tahun_ajaran_id')
+                    ->relationship('tahunAjaran', 'nama_tahun')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\NilaiResource\Pages;
 
-use App\Filament\Resources\NilaiResource;
+use Livewire\Form;
 use Filament\Actions;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\NilaiResource;
 
 class EditNilai extends EditRecord
 {
@@ -15,5 +17,9 @@ class EditNilai extends EditRecord
         return [
             Actions\DeleteAction::make(),
         ];
+    }
+    public function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
     }
 }

@@ -28,15 +28,23 @@ class KelasResource extends Resource
     {
         return $form
             ->schema([
+                Select::make('tingkat_kelas_id')
+                ->required()
+                ->placeholder('Pilih Kelas')
+                ->label('Tingkat Kelas')
+                ->relationship('tingkatkelas','kelas'),
                 TextInput::make('nama_kelas')
                 ->required()
+                ->placeholder('VII A / VIII B / IX C')
                 ->label('Nama Kelas'),
                 Select::make('guru_id')
                 ->required()
+                ->placeholder('Pilih Walikelas')
                 ->label('Walikelas')
                 ->relationship('guru','nama'),
                 Select::make('tahun_ajaran_id')
                 ->required()
+                ->placeholder('Pilih Tahun Ajaran')
                 ->label('Tahun Ajaran')
                 ->relationship('tahunajaran','nama_tahun'),
                 ]);
@@ -46,14 +54,19 @@ class KelasResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('tingkatkelas.kelas')
+                ->searchable()
+                ->toggleable(isToggledHiddenByDefault: true)
+                ->label('Kelas'),
                 TextColumn::make('nama_kelas')
                 ->searchable()
                 ->label('Nama Kelas'),
                 TextColumn::make('guru.nama')
                 ->searchable()
-                ->label('Nama Guru'),
+                ->label('Nama Walikelas'),
                 TextColumn::make('tahunajaran.nama_tahun')
                 ->searchable()
+                ->sortable()
                 ->label('Tahun Ajaran'),
                 TextColumn::make('created_at')
                     ->dateTime()
