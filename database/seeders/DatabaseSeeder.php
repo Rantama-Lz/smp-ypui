@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             MapelMasterSeeder::class,
             TingkatKelasSeeder::class,
             TahunAjaranSeeder::class,
+            SppSeeder::class,
             KelasSeeder::class,
             MataPelajaranSeeder::class,
             SiswaKelasSeeder::class

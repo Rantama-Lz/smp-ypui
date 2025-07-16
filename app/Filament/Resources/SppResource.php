@@ -21,6 +21,7 @@ class SppResource extends Resource
 {
     protected static ?string $model = Spp::class;
     protected static ?string $navigationLabel = 'SPP';
+    protected static ?string $heading = 'SPP';
     protected static ?string $navigationGroup = 'Manajemen Keuangan';
     protected static ?string $navigationIcon = 'heroicon-o-wallet';
 
@@ -82,7 +83,24 @@ class SppResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('tahun_ajaran_id')
-                    ->relationship('tahunAjaran', 'nama_tahun')
+                    ->relationship('tahunajaran', 'nama_tahun')
+                    ->label('Tahun Ajaran'),
+                SelectFilter::make('bulan')
+                ->options([
+                    'Januari' => 'Januari',
+                    'Februari' => 'Februari',
+                    'Maret' => 'Maret',
+                    'April' => 'April',
+                    'Mei' => 'Mei',
+                    'Juni' => 'Juni',
+                    'Juli' => 'Juli',
+                    'Agustus' => 'Agustus',
+                    'September' => 'September',
+                    'Oktober' => 'Oktober',
+                    'November' => 'November',
+                    'Desember' => 'Desember'
+                    ])
+                ->label('Bulan')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -109,4 +127,6 @@ class SppResource extends Resource
             'edit' => Pages\EditSpp::route('/{record}/edit'),
         ];
     }
+
+    
 }

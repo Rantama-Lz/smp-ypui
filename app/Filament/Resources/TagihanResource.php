@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use App\Models\SiswaKelas;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use function Laravel\Prompts\select;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -19,10 +20,10 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\TagihanResource\Pages;
+use Filament\Pages\Actions\Action;
+
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\TagihanResource\RelationManagers;
-
-use function Laravel\Prompts\select;
 
 class TagihanResource extends Resource
 {
@@ -161,6 +162,7 @@ class TagihanResource extends Resource
             'index' => Pages\ListTagihans::route('/'),
             'create' => Pages\CreateTagihan::route('/create'),
             'edit' => Pages\EditTagihan::route('/{record}/edit'),
+            'generate' => Pages\GenerateTagihan::route('/generate'),
         ];
     }
 }

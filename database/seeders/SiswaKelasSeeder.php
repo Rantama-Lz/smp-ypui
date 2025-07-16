@@ -21,41 +21,41 @@ class SiswaKelasSeeder extends Seeder
         $siswaList = Siswa::all();
 
         if ($tahunajaranList->isEmpty() || $kelasList->isEmpty() || $siswaList->isEmpty()) {
-        $this->command->warn('Seeder dibatalkan: Pastikan ada data tahun ajaran, kelas, dan siswa.');
+            $this->command->warn('Seeder dibatalkan: Pastikan ada data tahun ajaran, kelas, dan siswa.');
         return;
-    }
+        }
 
     // Loop semua siswa dan assign ke kelas random di tahun ajaran aktif
     $activeYears = $tahunajaranList->where('active', true);
 
-    if ($activeYears->isEmpty()) {
-        $this->command->warn('Tidak ada tahun ajaran yang aktif.');
-        return;
-    }
-
-    foreach ($siswaList as $siswa) {
-        foreach ($activeYears as $tahun) {
-            $kelasTahunIni = $kelasList->where('tahun_ajaran_id', $tahun->id);
-
-            if ($kelasTahunIni->isEmpty()) {
-                continue;
-            }
-
-            $kelas = $kelasTahunIni->random();
-
-            SiswaKelas::updateOrCreate(
-                [
-                    'siswa_id' => $siswa->id,
-                    'tahun_ajaran_id' => $tahun->id,
-                ],
-                [
-                    'kelas_id' => $kelas->id,
-                ]
-            );
+        if ($activeYears->isEmpty()) {
+            $this->command->warn('Tidak ada tahun ajaran yang aktif.');
+            return;
         }
-    }
 
-    $this->command->info('Seeder SiswaKelas berhasil dijalankan.');
+        foreach ($siswaList as $siswa) {
+            foreach ($activeYears as $tahun) {
+                $kelasTahunIni = $kelasList->where('tahun_ajaran_id', $tahun->id);
+
+                if ($kelasTahunIni->isEmpty()) {
+                    continue;
+                }
+
+                $kelas = $kelasTahunIni->random();
+
+                SiswaKelas::updateOrCreate(
+                    [
+                        'siswa_id' => $siswa->id,
+                        'tahun_ajaran_id' => $tahun->id,
+                    ],
+                    [
+                        'kelas_id' => $kelas->id,
+                    ]
+                );
+            }
+        }
+
+        $this->command->info('Seeder SiswaKelas berhasil dijalankan.');
     }
 
     

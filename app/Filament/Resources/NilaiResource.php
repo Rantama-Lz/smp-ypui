@@ -8,16 +8,17 @@ use App\Models\Nilai;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use PhpParser\Node\Stmt\Label;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\NilaiResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\NilaiResource\RelationManagers;
-use PhpParser\Node\Stmt\Label;
 
 class NilaiResource extends Resource
 {
@@ -34,7 +35,7 @@ class NilaiResource extends Resource
                 ->preload()
                 ->required()
                 ->label('Nama Siswa')
-                ->placeholder('Nama Siswa - NIS - Kelas')
+                ->placeholder('Nama Siswa - NIS - Kelas - Tahun Ajaran')
                 ->relationship('siswaKelas','id')
                 ->options(function () {
                 return \App\Models\SiswaKelas::with(['siswa', 'kelas'])
@@ -42,7 +43,7 @@ class NilaiResource extends Resource
                     ->sortBy(fn ($record) => $record->siswa->nama)
                     ->mapWithKeys(function ($record) {
                         return [
-                            $record->id => $record->siswa->nama . ' - ' . $record->siswa->nis . ' - ' . $record->kelas->nama_kelas
+                            $record->id => $record->siswa->nama . ' - ' . $record->siswa->nis . ' - ' . $record->kelas->nama_kelas . ' - ' . $record->tahunajaran->nama_tahun
                         ];
                     });
                 })
@@ -50,12 +51,7 @@ class NilaiResource extends Resource
                 //     $record->siswa->nama . ' - '. $record->siswa->nis .' - ' . $record->kelas->nama_kelas
                 // )
                 ->reactive()
-                ->afterStateUpdated(function ($state, $set) {
-                $siswaKelas = \App\Models\SiswaKelas::find($state);
-                if ($siswaKelas) {
-                    $set('tahun_ajaran_id', $siswaKelas->tahun_ajaran_id);
-                    }
-                })
+                
                 ->afterStateUpdated(function ($state, callable $set) {
                     $siswa = \App\Models\Siswa::find($state);
                     $set('nis', $siswa?->nis);
@@ -66,10 +62,7 @@ class NilaiResource extends Resource
                 ->placeholder('Pilih Mata Pelajaran')
                 ->label('Mata Pelajaran')
                 ->relationship('mapel.master','nama_mapel'),
-                Select::make('tahun_ajaran_id')
-                ->relationship('SiswaKelas.tahunajaran', 'nama_tahun')
-                ->disabled()
-                ->label('Tahun Ajaran'),
+                
                 Select::make('semester')
                 ->placeholder('Pilih Semester')
                 ->required()
@@ -111,13 +104,16 @@ class NilaiResource extends Resource
                 ->label('NIS')
                 ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('siswaKelas.kelas.nama_kelas')
+                ->searchable()
                 ->label('Kelas')
                 ->sortable(),
                 TextColumn::make('mapel.master.nama_mapel')
+                ->searchable()
                 ->label('Mata Pelajaran')
                 ->sortable(),
                 TextColumn::make('siswaKelas.tahunajaran.nama_tahun')
                 ->label('Tahun Ajaran')
+                ->toggleable(isToggledHiddenByDefault: true)
                 ->sortable(),
                 TextColumn::make('semester')
                 ->searchable(),
@@ -147,7 +143,15 @@ class NilaiResource extends Resource
                 ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('siswa_kelas_id')
+                ->label('Kelas')
+                ->relationship('siswaKelas.kelas.tingkatkelas', 'kelas'),
+                SelectFilter::make('tahun_ajaran_id')
+                ->label('Tahun Ajaran')
+                ->relationship('siswaKelas.tahunajaran', 'nama_tahun'),
+                SelectFilter::make('mata_pelajaran_id')
+                ->label('Mata Pelajaran')
+                ->relationship('mapel.master', 'nama_mapel'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
