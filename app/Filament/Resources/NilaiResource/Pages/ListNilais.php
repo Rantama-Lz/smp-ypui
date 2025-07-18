@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\NilaiResource\Pages;
 
-use App\Filament\Resources\NilaiResource;
 use Filament\Actions;
+
+use Filament\Actions\Action;
+use App\Filament\Resources\NilaiResource;
 use Filament\Resources\Pages\ListRecords;
 
 class ListNilais extends ListRecords
@@ -13,7 +15,12 @@ class ListNilais extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            // Actions\CreateAction::make(),
+            Action::make('input_nilai')
+            ->label('Input Nilai')
+            ->url(NilaiResource::getUrl('input-nilai'))
+            ->icon('heroicon-o-pencil-square')
+            ->color('primary'),
         ];
     }
 }

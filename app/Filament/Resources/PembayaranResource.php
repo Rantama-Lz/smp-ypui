@@ -90,11 +90,11 @@ class PembayaranResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('tagihan.siswaKelas.nama')
+                TextColumn::make('tagihan.siswaKelas.siswa.nama')
                 ->label('Nama Siswa')
                 ->searchable()
                 ->sortable(),
-                TextColumn::make('tagihan.siswaKelas.nis')
+                TextColumn::make('tagihan.siswaKelas.siswa.nis')
                 ->label('NIS')
                 ->searchable()
                 ->toggleable(isToggledHiddenByDefault: true),

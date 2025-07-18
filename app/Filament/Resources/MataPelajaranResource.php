@@ -20,7 +20,12 @@ class MataPelajaranResource extends Resource
 {
     protected static ?string $model = MataPelajaran::class;
     protected static ?string $navigationGroup = 'Manajemen Akademik';
+    protected static ?int $navigationSort = 3;
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
+    public static function shouldRegisterNavigation(): bool
+{
+    return false; // Tidak muncul di sidebar
+}
 
     public static function form(Form $form): Form
     {
@@ -35,7 +40,7 @@ class MataPelajaranResource extends Resource
                 ->required()
                 ->label('Nama Mata Pelajaran')
                 ->placeholder('Pilih Mata Pelajaran')
-                ->relationship('master','nama_mapel'),
+                ->relationship('mapelmaster','nama_mapel'),
                 Select::make('guru_id')
                 ->required()
                 ->label('Guru Pengajar')
@@ -51,17 +56,17 @@ class MataPelajaranResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('master.nama_mapel')
+                TextColumn::make('mapelmaster.nama_mapel')
                 ->label('Nama Mata Pelajaran')
                 ->searchable(),
-                TextColumn::make('tingkatkelas.kelas')
-                ->searchable()
-                ->label('Kelas'),
                 TextColumn::make('guru.nama')
                 ->searchable()
                 ->label('Guru Pengajar')
                 ->numeric()
                 ->sortable(),
+                TextColumn::make('tingkatkelas.kelas')
+                ->searchable()
+                ->label('Kelas'),
                 TextColumn::make('tahunajaran.nama_tahun')
                 ->label('Tahun Ajaran')
                 ->sortable(),

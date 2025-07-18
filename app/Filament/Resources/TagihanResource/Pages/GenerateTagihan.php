@@ -36,7 +36,8 @@ class GenerateTagihan extends Page
                         'xl' => 1,
                         '2xl' => 1,
                         ])
-                        ->label('Tahun Ajaran')
+                        ->label('Siswa Tahun Ajaran')
+                        ->placeholder('Pilih Tahun Ajaran')
                         ->options(TahunAjaran::all()->pluck('nama_tahun', 'id'))
                         ->required(),
 
@@ -46,7 +47,8 @@ class GenerateTagihan extends Page
                         'xl' => 1,
                         '2xl' => 1,
                         ])
-                        ->label('Bulan SPP')
+                        ->label('SPP Bulan')
+                        ->placeholder('Pilih Bulan')
                         ->options([
                             'Januari' => 'Januari',
                             'Februari' => 'Februari',
@@ -69,11 +71,22 @@ class GenerateTagihan extends Page
 
      public function generate(): void
     {
-        $siswaKelasList = SiswaKelas::where('tahun_ajaran_id', $this->tahunajaranId)->get();
+        $siswaKelasList = SiswaKelas::where('tahun_ajaran_id', $this->tahunajaranId)
+                        ->where('status', 'Aktif')
+                        ->get();
         $spp = Spp::where('tahun_ajaran_id', $this->tahunajaranId)
                   ->where('bulan', $this->bulan)
                   ->first();
-
+        
+         if ($siswaKelasList->isEmpty()) {
+            Notification::make()
+                ->title('Tidak ada Siswa aktif pada Tahun Ajaran yang dipilih.')
+                ->warning()
+                ->persistent()
+                ->send();
+            return;
+        }
+        
         if (! $spp) {
             Notification::make()
                 ->title("SPP untuk bulan {$this->bulan} belum tersedia.")
@@ -99,11 +112,18 @@ class GenerateTagihan extends Page
                 $counter++;
             }
         }
-
+        if ($counter === 0) {
+        Notification::make()
+            ->title("Semua Siswa sudah memiliki tagihan bulan {$this->bulan}.")
+            ->info()
+            ->send();
+        return;
+    }
         Notification::make()
             ->title("Berhasil membuat {$counter} tagihan bulan {$this->bulan}.")
             ->success()
             ->send();
+            $this->redirect(TagihanResource::getUrl());
     }
 
     public function getRedirectUrl(): string

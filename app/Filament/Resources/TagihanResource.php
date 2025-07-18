@@ -56,12 +56,7 @@ class TagihanResource extends Resource
                 $item->id => $item->siswa->nama . ' - ' . $item->siswa->nis . ' - ' . $item->kelas->nama_kelas . ' - ' . $item->tahunajaran->nama_tahun,
                 ];
                 }))
-                // ->relationship(
-                //     name: 'siswaKelas',
-                //     titleAttribute: 'id', // bisa ganti ke 'siswa.nama' tapi butuh accessor
-                //     modifyQueryUsing: fn ($query) => $query->with(['siswa', 'kelas', 'tahunajaran']),
-                // )
-                // ->getOptionLabelFromRecordUsing(fn ($record) => $record->siswa->nama . ' - ' . $record->siswa->nis . ' - ' . $record->tahunajaran->nama_tahun)
+                
                 ->reactive()
                 ->afterStateUpdated(function ($state, $set) {
                 $siswaKelas = \App\Models\SiswaKelas::find($state);
@@ -74,13 +69,6 @@ class TagihanResource extends Resource
                     $set('nis', $siswa?->nis);
                 }),
 
-                // Select::make('tahun_ajaran_id')
-                // ->relationship('siswaKelas.tahunajaran', 'nama_tahun')
-                // ->preload()
-                // ->required()
-                // ->label('Tahun Ajaran')
-                // ->placeholder('Pilih Tahun Ajaran'),
-                
                 Select::make('spp_id')
                 ->placeholder('Bulan - Nominal - Tahun Ajaran')
                 ->label('SPP')
@@ -107,6 +95,7 @@ class TagihanResource extends Resource
     {
         return $table
             ->columns([
+                
                 TextColumn::make('siswaKelas.siswa.nama')
                 ->label('Nama Siswa')
                 ->searchable()

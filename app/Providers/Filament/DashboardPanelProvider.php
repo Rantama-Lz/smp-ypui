@@ -40,7 +40,7 @@ class DashboardPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
             'Dashboard',
-            'Manajemen Data Pengguna',
+            'Manajemen Pengguna',
             'Manajemen Akademik',
             'Manajemen Keuangan',
             ])

@@ -25,7 +25,9 @@ use App\Filament\Resources\GuruResource\RelationManagers;
 class GuruResource extends Resource
 {
     protected static ?string $model = Guru::class;
-    protected static ?string $navigationGroup = 'Manajemen Data Pengguna';
+    protected static ?string $navigationLabel = 'Data Guru';
+    protected static ?string $label = 'Data Guru';
+    protected static ?string $navigationGroup = 'Manajemen Pengguna';
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function form(Form $form): Form

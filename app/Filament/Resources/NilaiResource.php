@@ -18,12 +18,14 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\NilaiResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\NilaiResource\Pages\InputNilai;
 use App\Filament\Resources\NilaiResource\RelationManagers;
 
 class NilaiResource extends Resource
 {
     protected static ?string $model = Nilai::class;
     protected static ?string $navigationGroup = 'Manajemen Akademik';
+    protected static ?int $navigationSort = 4;
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
     public static function form(Form $form): Form
@@ -36,7 +38,6 @@ class NilaiResource extends Resource
                 ->required()
                 ->label('Nama Siswa')
                 ->placeholder('Nama Siswa - NIS - Kelas - Tahun Ajaran')
-                ->relationship('siswaKelas','id')
                 ->options(function () {
                 return \App\Models\SiswaKelas::with(['siswa', 'kelas'])
                     ->get()
@@ -47,21 +48,12 @@ class NilaiResource extends Resource
                         ];
                     });
                 })
-                // ->getOptionLabelFromRecordUsing(fn ($record) =>
-                //     $record->siswa->nama . ' - '. $record->siswa->nis .' - ' . $record->kelas->nama_kelas
-                // )
-                ->reactive()
-                
-                ->afterStateUpdated(function ($state, callable $set) {
-                    $siswa = \App\Models\Siswa::find($state);
-                    $set('nis', $siswa?->nis);
-                }),
-                
-                Select::make('mata_pelajaran_id')
+                ->reactive(),
+                Select::make('mapel_master_id')
                 ->required()
                 ->placeholder('Pilih Mata Pelajaran')
                 ->label('Mata Pelajaran')
-                ->relationship('mapel.master','nama_mapel'),
+                ->relationship('mapelmaster','nama_mapel'),
                 
                 Select::make('semester')
                 ->placeholder('Pilih Semester')
@@ -84,12 +76,8 @@ class NilaiResource extends Resource
                 TextInput::make('nilai_uas')
                 ->label('Nilai Ujian Akhir Semester')
                 ->maxValue('100')
-                ->minValue('10')
+                ->minValue('0')
                 ->numeric(),
-                // TextInput::make('nilai_akhir')
-                // ->maxValue('100')
-                // ->live()
-                // ->readonly(),
             ]);
     }
 
@@ -107,7 +95,7 @@ class NilaiResource extends Resource
                 ->searchable()
                 ->label('Kelas')
                 ->sortable(),
-                TextColumn::make('mapel.master.nama_mapel')
+                TextColumn::make('mapelmaster.nama_mapel')
                 ->searchable()
                 ->label('Mata Pelajaran')
                 ->sortable(),
@@ -142,6 +130,7 @@ class NilaiResource extends Resource
                 ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('siswaKelas.siswa.nama','asc')
             ->filters([
                 SelectFilter::make('siswa_kelas_id')
                 ->label('Kelas')
@@ -151,7 +140,7 @@ class NilaiResource extends Resource
                 ->relationship('siswaKelas.tahunajaran', 'nama_tahun'),
                 SelectFilter::make('mata_pelajaran_id')
                 ->label('Mata Pelajaran')
-                ->relationship('mapel.master', 'nama_mapel'),
+                ->relationship('mapelmaster', 'nama_mapel'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -176,6 +165,7 @@ class NilaiResource extends Resource
             'index' => Pages\ListNilais::route('/'),
             'create' => Pages\CreateNilai::route('/create'),
             'edit' => Pages\EditNilai::route('/{record}/edit'),
+            'input-nilai' => InputNilai::route('/input-nilai')
         ];
     }
 }

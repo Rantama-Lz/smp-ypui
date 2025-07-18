@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('siswa_id')->constrained()->onDelete('cascade');
             $table->foreignId('kelas_id')->constrained()->onDelete('cascade');
             $table->foreignId('tahun_ajaran_id')->constrained()->onDelete('cascade');
+            $table->enum('status', ['Aktif','Tidak Aktif','Lulus'])->default('Aktif');
             $table->timestamps();
 
             $table->unique(['siswa_id', 'tahun_ajaran_id']); // supaya 1 siswa hanya 1 kelas per tahun

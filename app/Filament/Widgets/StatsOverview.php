@@ -6,6 +6,7 @@ use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\MapelMaster;
 use App\Models\Siswa;
+use App\Models\SiswaKelas;
 use App\Models\TahunAjaran;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -17,8 +18,9 @@ class StatsOverview extends BaseWidget
     {
 
         $mapelCount = MapelMaster::count();
+        $kelasCount = Kelas::count();
         $tahunajaranAktif = TahunAjaran::where('active', true)->first();
-        $jumlahKelas = Kelas::where('tahun_ajaran_id', $tahunajaranAktif->id)->count();
+        $SiswaAktif = SiswaKelas::where('status', "Aktif")->count();
         
         // foreach ($tahunajaranAktif as $tahun) {
         // $jumlahKelas = Kelas::where('tahun_ajaran_id', $tahun->id)->count();
@@ -30,7 +32,7 @@ class StatsOverview extends BaseWidget
         // return $stats;
         return [
             Stat::make('Tahun Ajaran Aktif', $tahunajaranAktif->nama_tahun),
-            Stat::make('Jumlah Kelas Aktif', $jumlahKelas),
+            Stat::make('Jumlah Kelas', $kelasCount),
             Stat::make('Jumlah Mata Pelajaran', $mapelCount),
         ];
         

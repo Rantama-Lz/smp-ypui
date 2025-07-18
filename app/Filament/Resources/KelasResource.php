@@ -17,11 +17,13 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\KelasResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\KelasResource\RelationManagers;
+use App\Filament\Resources\KelasResource\RelationManagers\SiswaKelasRelationManager;
 
 class KelasResource extends Resource
 {
     protected static ?string $model = Kelas::class;
     protected static ?string $navigationGroup = 'Manajemen Akademik';
+    protected static ?int $navigationSort = 2;
     protected static ?string $navigationIcon = 'heroicon-o-building-library';
 
     public static function form(Form $form): Form
@@ -37,16 +39,6 @@ class KelasResource extends Resource
                 ->required()
                 ->placeholder('VII A / VIII B / IX C')
                 ->label('Nama Kelas'),
-                Select::make('guru_id')
-                ->required()
-                ->placeholder('Pilih Walikelas')
-                ->label('Walikelas')
-                ->relationship('guru','nama'),
-                Select::make('tahun_ajaran_id')
-                ->required()
-                ->placeholder('Pilih Tahun Ajaran')
-                ->label('Tahun Ajaran')
-                ->relationship('tahunajaran','nama_tahun'),
                 ]);
     }
 
@@ -56,18 +48,11 @@ class KelasResource extends Resource
             ->columns([
                 TextColumn::make('tingkatkelas.kelas')
                 ->searchable()
-                ->toggleable(isToggledHiddenByDefault: true)
-                ->label('Kelas'),
+                ->toggleable(isToggledHiddenByDefault: false)
+                ->label('Tingkat Kelas'),
                 TextColumn::make('nama_kelas')
                 ->searchable()
                 ->label('Nama Kelas'),
-                TextColumn::make('guru.nama')
-                ->searchable()
-                ->label('Nama Walikelas'),
-                TextColumn::make('tahunajaran.nama_tahun')
-                ->searchable()
-                ->sortable()
-                ->label('Tahun Ajaran'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -79,6 +64,7 @@ class KelasResource extends Resource
                     ->label('Diperbarui pada')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultPaginationPageOption('25')
             ->filters([
                 //
             ])
@@ -96,7 +82,7 @@ class KelasResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            SiswaKelasRelationManager::class,
         ];
     }
 

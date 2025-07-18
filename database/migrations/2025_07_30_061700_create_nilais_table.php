@@ -14,14 +14,15 @@ return new class extends Migration
         Schema::create('nilais', function (Blueprint $table) {
             $table->id();
             $table->foreignId('siswa_kelas_id')->constrained()->onDelete('cascade');
-            $table->foreignId('mata_pelajaran_id')->constrained()->cascadeOnDelete();
-            // $table->foreignId('tahun_ajaran_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('mapel_master_id')->constrained()->cascadeOnDelete();
             $table->enum('semester', ['Ganjil', 'Genap']);
             $table->integer('nilai_harian')->nullable();
             $table->integer('nilai_uts')->nullable();
             $table->integer('nilai_uas')->nullable();   
             $table->integer('nilai_akhir')->nullable();          
             $table->timestamps();
+
+            // $table->unique(['siswa_kelas_id', 'mapel_master_id', 'semester']);
         });
     }
 

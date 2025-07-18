@@ -19,6 +19,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SiswaResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -27,7 +28,9 @@ use App\Filament\Resources\SiswaResource\RelationManagers;
 class SiswaResource extends Resource
 {
     protected static ?string $model = Siswa::class;
-    protected static ?string $navigationGroup = 'Manajemen Data Pengguna';
+    protected static ?string $navigationLabel = 'Data Siswa';
+    protected static ?string $label = 'Data Siswa';
+    protected static ?string $navigationGroup = 'Manajemen Pengguna';
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     public static function form(Form $form): Form
@@ -68,6 +71,7 @@ class SiswaResource extends Resource
     {
         return $table
             ->columns([
+                 
                 TextColumn::make('no')->state(
                 static function (HasTable $livewire, stdClass $rowLoop): string {
                 return (string) (

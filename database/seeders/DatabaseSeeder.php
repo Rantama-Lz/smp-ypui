@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
             SppSeeder::class,
             KelasSeeder::class,
             MataPelajaranSeeder::class,
-            SiswaKelasSeeder::class
+            // SiswaKelasSeeder::class
         ]);
     }
 }

@@ -14,13 +14,13 @@ class TingkatKelasSeeder extends Seeder
     public function run(): void
     {
         TingkatKelas::create([
-            'kelas' => 'VII',
+            'kelas' => '7',
         ]);
         TingkatKelas::create([
-            'kelas' => 'VIII',
+            'kelas' => '8',
         ]);
         TingkatKelas::create([
-            'kelas' => 'IX',
+            'kelas' => '9',
         ]);
     }
 }

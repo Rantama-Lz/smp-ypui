@@ -24,6 +24,7 @@ class TahunAjaranResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
     protected static ?string $navigationGroup = 'Manajemen Akademik';
+    protected static ?int $navigationSort = 5;
     public static function form(Form $form): Form
     {
         return $form
@@ -36,6 +37,7 @@ class TahunAjaranResource extends Resource
 
                 Toggle::make('active')
                     ->label('Status Aktif')
+                    ->inline(false)
                     ->required(),
             ]);
     }

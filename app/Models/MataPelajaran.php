@@ -24,7 +24,9 @@ class MataPelajaran extends Model
     {
     return $this->belongsTo(TahunAjaran::class, 'tahun_ajaran_id' , 'id');
     }
-    public function master() {
-    return $this->belongsTo(MapelMaster::class, 'mapel_master_id');
+    
+    public function mapelmaster() {
+
+    return $this->belongsTo(MapelMaster::class, 'mapel_master_id' , 'id');
 }
 }

@@ -21,8 +21,9 @@ class Kelas extends Model
     public function tingkatkelas(){
         return $this->belongsTo(TingkatKelas::class, 'tingkat_kelas_id', 'id');
     }
-    // public function siswaKelas()
-    // {
-    //     return $this->hasMany(SiswaKelas::class);
-    // }
+    public function siswaKelas()
+    {
+        return $this->hasMany(SiswaKelas::class);
+    }
+    
 }
