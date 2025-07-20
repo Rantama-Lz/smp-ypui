@@ -5,9 +5,11 @@ namespace App\Filament\Widgets;
 use App\Models\Siswa;
 use Filament\Widgets\ChartWidget;
 use Filament\Widgets\PieChartWidget;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 
 class DashboardChart extends ChartWidget
 {   
+    use HasWidgetShield;
     protected static ?int $sort = 2;
     protected int | string | array $columnSpan = 'full';
     protected static ?string $maxHeight = '250px';

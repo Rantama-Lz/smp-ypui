@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\TagihanResource\Pages;
 
-use App\Filament\Resources\TagihanResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\TagihanResource;
 
 class ListTagihans extends ListRecords
 {
@@ -15,9 +16,9 @@ class ListTagihans extends ListRecords
     {
         return [
             // Actions\CreateAction::make(),
-            Action::make('generate')
+            CreateAction::make('create')
                 ->label('Buat')
-                ->url(route('filament.dashboard.resources.tagihans.generate'))
+                ->url(TagihanResource::getUrl('create'))
                 ->color('primary'),
         ];
     }

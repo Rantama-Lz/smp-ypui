@@ -8,6 +8,8 @@ use Filament\Forms\Form;
 use App\Models\Pembayaran;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -22,29 +24,68 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\PembayaranResource\Pages;
 use App\Filament\Resources\PembayaranResource\RelationManagers;
-use Filament\Forms\Components\Hidden;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class PembayaranResource extends Resource
+class PembayaranResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Pembayaran::class;
-    protected static ?string $navigationGroup = 'Manajemen Keuangan';
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
+    public static function getNavigationSort(): ?int
+{
+    if (auth()->check() && auth()->user()->hasRole('siswa')) {
+        return 2;
+    }
+    return 3;
+}
+    public static function getNavigationGroup(): ?string
+{
+    if (auth()->check() && auth()->user()->hasRole('siswa')) {
+        return 'Keuangan';
+    }
 
+    return 'Manajemen Keuangan'; 
+}
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Select::make('tagihan_id')
-                ->placeholder('Nama Siswa - Bulan - Nominal')
+                ->placeholder('Nama Siswa - Tahun Ajaran - Bulan - Nominal')
                 ->label('Tagihan')
                 ->options(function () {
-                    return \App\Models\Tagihan::with(['siswaKelas', 'spp'])->get()->mapWithKeys(function ($tagihan) {
-                        return [
-                            $tagihan->id => $tagihan->siswa->nama . ' - ' .
-                                $tagihan->spp->bulan . ' - Rp ' .
-                                number_format($tagihan->spp->nominal, 0, ',', '.'),
-                        ];
-                    });
+                    $user = Auth::user();
+                    if ($user->hasRole('siswa')) {
+                        $siswaId = $user->siswa?->id;
+
+                        if (!$siswaId) {
+                            return [];
+                        }
+
+                        return \App\Models\Tagihan::with(['siswaKelas.siswa', 'spp'])
+                            ->whereHas('siswaKelas', function ($query) use ($siswaId) {
+                                $query->where('siswa_id', $siswaId);
+                            })
+                            ->get()
+                            ->mapWithKeys(function ($tagihan) {
+                                $nama = $tagihan->siswaKelas->siswa->nama ?? '';
+                                $tahunajaran = $tagihan->siswaKelas->tahunajaran->nama_tahun ?? '';
+                                $bulan = $tagihan->spp->bulan ?? '';
+                                $nominal = 'Rp ' . number_format($tagihan->spp->nominal ?? 0, 0, ',', '.');
+
+                                return [$tagihan->id => "$nama - $tahunajaran - $bulan - $nominal"];
+                            });
+                    }
+
+                    return \App\Models\Tagihan::with(['siswaKelas.siswa', 'spp'])
+                        ->get()
+                        ->mapWithKeys(function ($tagihan) {
+                            $nama = $tagihan->siswaKelas->siswa->nama ?? '';
+                            $bulan = $tagihan->spp->bulan ?? '';
+                            $tahunajaran = $tagihan->siswaKelas->tahunajaran->nama_tahun ?? '';
+                            $nominal = 'Rp ' . number_format($tagihan->spp->nominal ?? 0, 0, ',', '.');
+
+                            return [$tagihan->id => "$nama - $tahunajaran - $bulan - $nominal"];
+                        });
                 })
                 ->searchable(['siswaKelas.nama'])
                 ->preload()
@@ -69,7 +110,9 @@ class PembayaranResource extends Resource
                 FileUpload::make('buktibayar')
                     ->label('Bukti Pembayaran')
                     ->image()
+                    ->maxSize(2048)
                     ->directory('buktibayar')
+                    ->disabled(fn ($record) => $record?->status === 'Sudah Validasi')
                     ->required(),
                 Select::make('status')
                 ->label('Status Pembayaran')
@@ -80,6 +123,7 @@ class PembayaranResource extends Resource
                 ])
                 ->default('Menunggu Validasi')
                 ->disabled(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\CreateRecord)
+                ->visible(fn () => !Auth::user()->hasRole('siswa'))
                 ->required(),
                 
                 
@@ -98,6 +142,10 @@ class PembayaranResource extends Resource
                 ->label('NIS')
                 ->searchable()
                 ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('tagihan.siswaKelas.tahunajaran.nama_tahun')
+                ->label('Tahun Ajaran')
+                ->searchable()
+                ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('tagihan.spp.bulan')
                 ->label('Bulan'),
                 TextColumn::make('tagihan.spp.nominal')->label('Nominal')
@@ -132,14 +180,19 @@ class PembayaranResource extends Resource
                     ->label('Validasi')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn ($record) => $record->status === 'Menunggu Validasi')
+                    ->visible(function ($record) {
+                        $user = Auth::user();
+                        return $record->status === 'Menunggu Validasi' &&
+                            ($user->hasRole('admin') || $user->hasRole('super_admin'));
+                    })
                     ->action(function ($record) {
                         $record->update([
                             'status' => 'Sudah Validasi',
-                            // 'validated_by' => auth()->id(),
-                            // 'validated_at' => now(),
                         ]);
-                        $record->tagihan->update(['status' => 'Sudah Bayar']);
+
+                        $record->tagihan->update([
+                            'status' => 'Sudah Bayar',
+                        ]);
 
                         Notification::make()
                             ->title('Pembayaran divalidasi')
@@ -151,12 +204,15 @@ class PembayaranResource extends Resource
                     ->label('Tolak')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
-                    ->visible(fn ($record) => $record->status === 'Menunggu Validasi')
+                    ->visible(function ($record) {
+                        $user = Auth::user();
+                        return $record->status === 'Menunggu Validasi' &&
+                            ($user->hasRole('admin') || $user->hasRole('super_admin'));
+                    })
                     ->action(function ($record) {
                         $record->update([
                             'status' => 'Ditolak',
-                            // 'validated_by' => auth()->id(),
-                            // 'validated_at' => now(),
+
                         ]);
 
                         Notification::make()
@@ -192,5 +248,25 @@ class PembayaranResource extends Resource
             'create' => Pages\CreatePembayaran::route('/create'),
             'edit' => Pages\EditPembayaran::route('/{record}/edit'),
         ];
+    }
+    public static function getEloquentQuery(): Builder
+{
+    $query = parent::getEloquentQuery();
+
+    // Cek jika yang login adalah siswa
+    if (Auth::check() && Auth::user()->hasRole('siswa')) {
+        $siswaId = Auth::user()->siswa?->id;
+
+        // Ambil pembayaran yang terkait dengan siswa ini lewat relasi tagihan
+        $query->whereHas('tagihan.siswaKelas', function ($q) use ($siswaId) {
+            $q->where('siswa_id', $siswaId);
+        });
+    }
+
+    return $query;
+}
+    public static function getPermissionPrefixes(): array
+    {
+        return ['view', 'view_any', 'create', 'update', 'delete'];
     }
 }

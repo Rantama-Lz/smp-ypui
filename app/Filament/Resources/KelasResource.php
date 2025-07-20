@@ -32,7 +32,7 @@ class KelasResource extends Resource
             ->schema([
                 Select::make('tingkat_kelas_id')
                 ->required()
-                ->placeholder('Pilih Kelas')
+                ->placeholder('Pilih Tingkat Kelas')
                 ->label('Tingkat Kelas')
                 ->relationship('tingkatkelas','kelas'),
                 TextInput::make('nama_kelas')

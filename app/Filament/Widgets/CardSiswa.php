@@ -4,10 +4,12 @@ namespace App\Filament\Widgets;
 
 use App\Models\Siswa;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
 class CardSiswa extends BaseWidget
 {
+    use HasWidgetShield;
     protected static ?int $sort = 1;
     protected function getStats(): array
     {

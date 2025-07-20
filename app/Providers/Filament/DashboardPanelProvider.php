@@ -7,12 +7,27 @@ use Filament\Panel;
 use Filament\Widgets;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\Auth;
+use App\Filament\Resources\SppResource;
 use App\Filament\Widgets\StatsOverview;
+use Filament\Navigation\NavigationItem;
+use App\Filament\Resources\GuruResource;
+use App\Filament\Resources\UserResource;
 use App\Filament\Widgets\DashboardChart;
+use Filament\Navigation\NavigationGroup;
+use App\Filament\Resources\KelasResource;
+use App\Filament\Resources\NilaiResource;
+use App\Filament\Resources\SiswaResource;
 use Filament\Http\Middleware\Authenticate;
+use App\Filament\Resources\TagihanResource;
+use App\Filament\Resources\PembayaranResource;
+use App\Filament\Resources\SiswaKelasResource;
+use App\Filament\Resources\MapelMasterResource;
+use App\Filament\Resources\TahunAjaranResource;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -64,6 +79,24 @@ class DashboardPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->plugins([
+                FilamentShieldPlugin::make()
+                    ->gridColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 3
+                    ])
+                    ->sectionColumnSpan(1)
+                    ->checkboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 4,
+                    ])
+                    ->resourceCheckboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                    ]),
             ])
             ->authMiddleware([
                 Authenticate::class,

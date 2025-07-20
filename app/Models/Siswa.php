@@ -33,8 +33,17 @@ class Siswa extends Model
     public function kelas()
 {
     return $this->belongsToMany(Kelas::class, 'siswa_kelas')
-        ->withPivot('tahun_ajaran_id') // dan 'semester_id' kalau dipakai
+        ->withPivot('tahun_ajaran_id') 
         ->withTimestamps();
 }
 
+protected static function booted(): void
+{
+    static::deleting(function ($siswa) {
+        
+        if ($siswa->user) {
+            $siswa->user->delete();
+        }
+    });
+}
 }

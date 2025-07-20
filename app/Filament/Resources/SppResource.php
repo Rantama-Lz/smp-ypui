@@ -20,6 +20,7 @@ use App\Filament\Resources\SppResource\RelationManagers;
 class SppResource extends Resource
 {
     protected static ?string $model = Spp::class;
+    protected static ?int $navigationSort = 1;
     protected static ?string $navigationLabel = 'SPP';
     protected static ?string $heading = 'SPP';
     protected static ?string $navigationGroup = 'Manajemen Keuangan';

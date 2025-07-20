@@ -24,7 +24,8 @@ use App\Filament\Resources\GuruResource\RelationManagers;
 
 class GuruResource extends Resource
 {
-    protected static ?string $model = Guru::class;
+    protected static ?string $model = Guru::class;  
+    protected static ?int $navigationSort = 2;
     protected static ?string $navigationLabel = 'Data Guru';
     protected static ?string $label = 'Data Guru';
     protected static ?string $navigationGroup = 'Manajemen Pengguna';
@@ -34,16 +35,22 @@ class GuruResource extends Resource
     {
         return $form
             ->schema([
+                TextInput::make('email')
+                ->label('Email')
+                ->email()
+                ->required()
+                ->hiddenOn('edit')
+                ->dehydrated(fn($state) => filled($state)),
                 TextInput::make('nama')
                 ->required()
                 ->placeholder('Nama Lengkap')
                 ->formatStateUsing(fn($state): string => str()->headline($state))
                 ->label('Nama'),
                 TextInput::make('nip')
-                ->placeholder('NIP terdiri dari 18 digit angka')
+                ->helperText('NIP terdiri dari 18 digit angka.')
                 ->maxLength(18)
-                ->minLength(18)
-                ->required()
+                ->inputMode('numeric')
+                
                 ->label('Nomor Induk Pegawai'),
                 Select::make('jenis_kelamin')
                 ->placeholder('Pilih Jenis Kelamin')
@@ -57,12 +64,14 @@ class GuruResource extends Resource
                 ->required()
                 ->label('Tanggal Lahir'),
                 Textarea::make('alamat')
-                ->placeholder('Jl. Praja Lapangan No.8, RT.04/RW.01, Kebayoran Lama Selatan, Kebayoran Lama, Jakarta Selatan')
+                ->helperText('Contoh : Jl. Praja Lapangan No.8, RT.04/RW.01, Kebayoran Lama Selatan, Kebayoran Lama, Jakarta Selatan.')
                 ->required(),
                 FileUpload::make('foto')
                 ->label('Foto Profil')
+                ->image()
+                ->maxSize(2048) 
                 ->directory('guru'),
-                // ->disabled(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord), untuk disable edit
+                
             ]);
     }
 
@@ -70,16 +79,6 @@ class GuruResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('no')->state(
-                static function (HasTable $livewire, stdClass $rowLoop): string {
-                return (string) (
-                $rowLoop->iteration +
-                ($livewire->getTableRecordsPerPage() * (
-                $livewire->getTablePage() - 1
-                            ))
-                        );
-                    }
-                ),
                 TextColumn::make('nama')
                 ->sortable()
                 ->searchable()

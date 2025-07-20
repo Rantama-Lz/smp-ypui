@@ -165,7 +165,6 @@ class InputNilai extends Page implements HasForms
 
     $this->form->fill([
         ...$newState,
-        'siswa_kelas_id' => null,
         'nilai_harian' => null,
         'nilai_uts' => null,
         'nilai_uas' => null,

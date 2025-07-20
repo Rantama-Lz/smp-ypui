@@ -54,7 +54,8 @@ class BuatBanyakSiswaKelas extends Page implements HasForms
                 Select::make('tahun_ajaran_id')
                     ->label('Tahun Ajaran')
                     ->placeholder('Pilih Tahun Ajaran')
-                    ->options(\App\Models\TahunAjaran::all()->pluck('nama_tahun', 'id'))
+                    ->hint('Hanya menampilkan Tahun Ajaran yang Aktif')
+                    ->options(\App\Models\TahunAjaran::where('active', true)->pluck('nama_tahun', 'id'))
                     ->searchable()
                     ->required(),
 

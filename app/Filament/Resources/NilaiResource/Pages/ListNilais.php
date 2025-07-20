@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\NilaiResource\Pages;
 
-use Filament\Actions;
+use App\Models\Nilai;
 
+use Filament\Actions;
 use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use App\Filament\Resources\NilaiResource;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListNilais extends ListRecords
 {
@@ -16,11 +19,12 @@ class ListNilais extends ListRecords
     {
         return [
             // Actions\CreateAction::make(),
-            Action::make('input_nilai')
+            CreateAction::make('create')
             ->label('Input Nilai')
-            ->url(NilaiResource::getUrl('input-nilai'))
+            ->url(NilaiResource::getUrl('create'))
             ->icon('heroicon-o-pencil-square')
             ->color('primary'),
         ];
     }
+    
 }

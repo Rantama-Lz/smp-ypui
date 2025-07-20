@@ -22,4 +22,15 @@ class EditNilai extends EditRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+{
+    $data['nilai_akhir'] = round(
+        ($data['nilai_harian'] ?? 0) * 0.3 +
+        ($data['nilai_uts'] ?? 0) * 0.3 +
+        ($data['nilai_uas'] ?? 0) * 0.4
+    );
+
+    return $data;
+}
 }

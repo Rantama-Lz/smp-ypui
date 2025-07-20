@@ -4,17 +4,22 @@ namespace App\Filament\Resources;
 
 use stdClass;
 use Filament\Forms;
+use App\Models\User;
 use Filament\Tables;
 use App\Models\Siswa;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Group;
+use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -27,6 +32,7 @@ use App\Filament\Resources\SiswaResource\RelationManagers;
 
 class SiswaResource extends Resource
 {
+    protected static ?int $navigationSort = 3;
     protected static ?string $model = Siswa::class;
     protected static ?string $navigationLabel = 'Data Siswa';
     protected static ?string $label = 'Data Siswa';
@@ -37,31 +43,41 @@ class SiswaResource extends Resource
     {
         return $form
             ->schema([
+                TextInput::make('email')
+                ->label('Email')
+                ->email()
+                ->required()
+                ->hiddenOn('edit')
+                ->dehydrated(fn($state) => filled($state)),
                 TextInput::make('nama')
                 ->placeholder('Nama Lengkap')
                 ->label('Nama')
                 ->required()
                 ->formatStateUsing(fn($state): string => str()->headline($state)),
-                TextInput::make('nis')
+                DatePicker::make('tgl_lahir')
                 ->required()
-                ->label('Nomor Induk Siswa'),
-                    // ->disabled(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord), untuk disable edit
+                ->label('Tanggal Lahir'),
+                // TextInput::make('nis')
+                // ->maxLength(10)
+                // ->minLength(10)
+                // ->required()
+                // ->label('Nomor Induk Siswa'),
                 Select::make('jenis_kelamin')
                 ->placeholder('Pilih Jenis Kelamin')
                 ->required()
                 ->label('Jenis Kelamin')
+                ->preload()
                 ->options([
                     'Laki-laki' => 'Laki-laki',
                     'Perempuan' => 'Perempuan',
                     ]),
-                DatePicker::make('tgl_lahir')
-                ->required()
-                ->label('Tanggal Lahir'),
                 Textarea::make('alamat')
-                ->placeholder('Jl. Praja Lapangan No.8, RT.04/RW.01, Kebayoran Lama Selatan, Kebayoran Lama, Jakarta Selatan')
+                ->helperText('Contoh : Jl. Praja Lapangan No.8, RT.04/RW.01, Kebayoran Lama Selatan, Kebayoran Lama, Jakarta Selatan.')
                 ->required(),
                 FileUpload::make('foto')
                 ->label('Foto Profil')
+                ->image()
+                ->maxSize(2048) 
                 ->directory('siswa'),
                 
             ]);
@@ -71,17 +87,6 @@ class SiswaResource extends Resource
     {
         return $table
             ->columns([
-                 
-                TextColumn::make('no')->state(
-                static function (HasTable $livewire, stdClass $rowLoop): string {
-                return (string) (
-                $rowLoop->iteration +
-                ($livewire->getTableRecordsPerPage() * (
-                $livewire->getTablePage() - 1
-                            ))
-                        );
-                    }
-                ),
                 TextColumn::make('nama')
                 ->label('Nama Lengkap')
                 ->formatStateUsing(fn($state): string => str()->headline($state))
@@ -143,4 +148,5 @@ class SiswaResource extends Resource
             'edit' => Pages\EditSiswa::route('/{record}/edit'),
         ];
     }
+   
 }

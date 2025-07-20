@@ -5,11 +5,13 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Nilai;
+use App\Models\User;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use PhpParser\Node\Stmt\Label;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
@@ -20,13 +22,29 @@ use App\Filament\Resources\NilaiResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\NilaiResource\Pages\InputNilai;
 use App\Filament\Resources\NilaiResource\RelationManagers;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Facades\Filament;
 
-class NilaiResource extends Resource
+class NilaiResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Nilai::class;
-    protected static ?string $navigationGroup = 'Manajemen Akademik';
-    protected static ?int $navigationSort = 4;
+    
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+    public static function getNavigationSort(): ?int
+{
+    if (auth()->check() && auth()->user()->hasRole('siswa')) {
+        return 1;
+    }
+    return 4;
+}
+    public static function getNavigationGroup(): ?string
+{
+    if (auth()->check() && auth()->user()->hasRole('siswa')) {
+        return 'Akademik';
+    }
+    
+    return 'Manajemen Akademik';
+}
 
     public static function form(Form $form): Form
     {
@@ -34,6 +52,7 @@ class NilaiResource extends Resource
             ->schema([
                 Select::make('siswa_kelas_id')
                 ->searchable()
+                ->columnSpan(2)
                 ->preload()
                 ->required()
                 ->label('Nama Siswa')
@@ -63,6 +82,8 @@ class NilaiResource extends Resource
                     'Ganjil' => 'Ganjil',
                     'Genap' => 'Genap',
                 ]),
+                Grid::make(3)
+                ->schema([
                 TextInput::make('nilai_harian')
                 ->label('Nilai Harian')
                 ->maxValue('100')
@@ -78,6 +99,7 @@ class NilaiResource extends Resource
                 ->maxValue('100')
                 ->minValue('0')
                 ->numeric(),
+                ]),
             ]);
     }
 
@@ -87,50 +109,46 @@ class NilaiResource extends Resource
             ->columns([
                 TextColumn::make('siswaKelas.siswa.nama')
                 ->label('Nama Siswa')
-                ->sortable(),
+                ->sortable()
+                ->searchable(),
                 TextColumn::make('siswaKelas.siswa.nis')
                 ->label('NIS')
+                ->searchable()
                 ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('siswaKelas.kelas.nama_kelas')
                 ->searchable()
-                ->label('Kelas')
-                ->sortable(),
-                TextColumn::make('mapelmaster.nama_mapel')
-                ->searchable()
-                ->label('Mata Pelajaran')
-                ->sortable(),
+                ->sortable()
+                ->label('Kelas'),
                 TextColumn::make('siswaKelas.tahunajaran.nama_tahun')
                 ->label('Tahun Ajaran')
-                ->toggleable(isToggledHiddenByDefault: true)
-                ->sortable(),
+                ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('mapelmaster.nama_mapel')
+                ->searchable()
+                ->sortable()
+                ->label('Mata Pelajaran'),
                 TextColumn::make('semester')
-                ->searchable(),
+                ->searchable()
+                ->sortable(),
                 TextColumn::make('nilai_harian')
                 ->label('Nilai Harian')
-                ->numeric()
-                ->sortable(),
+                ->numeric(),
                 TextColumn::make('nilai_uts')
                 ->label('Nilai UTS')
-                ->numeric()
-                ->sortable(),
+                ->numeric(),
                 TextColumn::make('nilai_uas')
                 ->label('Nilai UAS')
-                ->numeric()
-                ->sortable(),
+                ->numeric(),
                 TextColumn::make('nilai_akhir')
                 ->label('Nilai Akhir')
-                ->numeric()
-                ->sortable(),
+                ->numeric(),
                 TextColumn::make('created_at')
                 ->dateTime()
-                ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                 ->dateTime()
-                ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('siswaKelas.siswa.nama','asc')
+            ->defaultSort('siswaKelas.kelas.nama_kelas' , 'desc')
             ->filters([
                 SelectFilter::make('siswa_kelas_id')
                 ->label('Kelas')
@@ -163,9 +181,29 @@ class NilaiResource extends Resource
     {
         return [
             'index' => Pages\ListNilais::route('/'),
-            'create' => Pages\CreateNilai::route('/create'),
+            // 'create' => Pages\CreateNilai::route('/create'),
             'edit' => Pages\EditNilai::route('/{record}/edit'),
-            'input-nilai' => InputNilai::route('/input-nilai')
+            'create' => InputNilai::route('/create')
         ];
     }
+
+ public static function getPermissionPrefixes(): array
+    {
+        return ['view', 'view_any', 'create', 'update', 'delete'];
+    }
+
+    public static function getEloquentQuery(): Builder
+{
+    $query = parent::getEloquentQuery();
+
+    if (Filament::auth()->user()?->hasRole('siswa')) {
+        $siswaId = Filament::auth()->user()?->siswa?->id;
+        $query->whereHas('siswaKelas', function ($q) use ($siswaId) {
+            $q->where('siswa_id', $siswaId);
+        });
+    }
+
+    return $query;
+}
+
 }

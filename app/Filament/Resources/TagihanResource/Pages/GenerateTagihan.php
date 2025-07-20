@@ -22,31 +22,22 @@ class GenerateTagihan extends Page
 
     public $tahunajaranId;
     public $bulan;
-
     
-
+    public static function canAccess(array $parameters = []): bool
+{
+    return !auth()->user()->hasRole('siswa');
+}
     public function getFormSchema(): array
     {
         return [
             Grid::make(2)
                 ->schema([
                     Select::make('tahunajaranId')
-                        ->columnSpan([
-                        'sm' => 1,
-                        'xl' => 1,
-                        '2xl' => 1,
-                        ])
                         ->label('Siswa Tahun Ajaran')
                         ->placeholder('Pilih Tahun Ajaran')
                         ->options(TahunAjaran::all()->pluck('nama_tahun', 'id'))
                         ->required(),
-
                         Select::make('bulan')
-                        ->columnSpan([
-                        'sm' => 1,
-                        'xl' => 1,
-                        '2xl' => 1,
-                        ])
                         ->label('SPP Bulan')
                         ->placeholder('Pilih Bulan')
                         ->options([

@@ -2,11 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use App\Models\Kelas;
 use App\Models\MapelMaster;
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,25 +16,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-        User::factory()->create([
-            'name' => 'Admin SMP YPUI',
-            'email' => 'adminsmpypui@gmail.com',
-        ]);
         $this->call([
-            SiswaSeeder::class,
-            GuruSeeder::class,
+            RoleSeeder::class,
+            UserSeeder::class,
+            // SiswaSeeder::class,
+            // GuruSeeder::class,
             MapelMasterSeeder::class,
             TingkatKelasSeeder::class,
             TahunAjaranSeeder::class,
             SppSeeder::class,
             KelasSeeder::class,
-            MataPelajaranSeeder::class,
+            // MataPelajaranSeeder::class,
             // SiswaKelasSeeder::class
         ]);
     }

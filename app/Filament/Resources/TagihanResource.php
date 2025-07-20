@@ -10,7 +10,9 @@ use Filament\Forms\Form;
 use App\Models\SiswaKelas;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Pages\Actions\Action;
 use function Laravel\Prompts\select;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -20,25 +22,37 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\TagihanResource\Pages;
-use Filament\Pages\Actions\Action;
-
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\TagihanResource\RelationManagers;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class TagihanResource extends Resource
+class TagihanResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Tagihan::class;
-    protected static ?string $navigationGroup = 'Manajemen Keuangan';
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
-    // Notif
-    // public static function getNavigationBadge(): ?string
-    // {
-    //     return static::getModel()::count();
-    // }
-    // public static function getNavigationBadgeColor(): ?string
-    // {
-    //     return static::getModel()::count() > 0 ? 'warning' : 'primary';
-    // }
+    public static function getNavigationSort(): ?int
+{
+    if (auth()->check() && auth()->user()->hasRole('siswa')) {
+        return 1;
+    }
+    return 2;
+}
+    public static function getNavigationGroup(): ?string
+{
+    if (auth()->check() && auth()->user()->hasRole('siswa')) {
+        return 'Keuangan';
+    }
+
+    return 'Manajemen Keuangan'; // default untuk admin
+}
+    public static function getNavigationLabel(): string
+{
+    if (Auth::check() && Auth::user()->hasRole('siswa')) {
+        return 'Tagihan SPP';
+    }
+
+    return 'Tagihan';
+}
 
     public static function form(Form $form): Form
     {
@@ -149,9 +163,31 @@ class TagihanResource extends Resource
     {
         return [
             'index' => Pages\ListTagihans::route('/'),
-            'create' => Pages\CreateTagihan::route('/create'),
+            // 'create' => Pages\CreateTagihan::route('/create'),
             'edit' => Pages\EditTagihan::route('/{record}/edit'),
-            'generate' => Pages\GenerateTagihan::route('/generate'),
+            'create' => Pages\GenerateTagihan::route('/create'),
         ];
+    }
+
+public static function getEloquentQuery(): Builder
+{
+    $query = parent::getEloquentQuery();
+
+    // Cek apakah user adalah siswa
+    if (Auth::user()->hasRole('siswa')) {
+        // Ambil siswa_id dari user
+        $siswaId = Auth::user()->siswa?->id;
+
+        // Filter berdasarkan siswa_id yang terkait dengan siswa_kelas
+        $query->whereHas('siswaKelas', function ($q) use ($siswaId) {
+            $q->where('siswa_id', $siswaId);
+        });
+    }
+
+    return $query;
+}
+public static function getPermissionPrefixes(): array
+    {
+        return ['view', 'view_any', 'create', 'update', 'delete'];
     }
 }

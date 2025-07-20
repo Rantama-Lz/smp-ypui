@@ -4,15 +4,17 @@ namespace App\Filament\Widgets;
 
 use App\Models\Guru;
 use App\Models\Kelas;
-use App\Models\MapelMaster;
 use App\Models\Siswa;
 use App\Models\SiswaKelas;
+use App\Models\MapelMaster;
 use App\Models\TahunAjaran;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
 class StatsOverview extends BaseWidget
 {
+    use HasWidgetShield;
     protected static ?int $sort = 3;
     protected function getStats(): array
     {

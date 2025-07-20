@@ -22,4 +22,14 @@ class Guru extends Model
     {
         return $this->hasMany(MataPelajaran::class, 'mapel_id', 'id');
     }
+
+    protected static function booted(): void
+{
+    static::deleting(function ($guru) {
+        
+        if ($guru->user) {
+            $guru->user->delete();
+        }
+    });
+}
 }
