@@ -10,7 +10,20 @@ use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 class DashboardChart extends ChartWidget
 {   
     use HasWidgetShield;
-    protected static ?int $sort = 2;
+    public static function getSort(): int
+{
+    $user = auth()->user();
+
+    if ($user->hasRole('guru')) {
+        return 4;
+    }
+
+    if ($user->hasRole('siswa')) {
+        return 4;
+    }
+
+    return 2; // fallback untuk role lain
+}
     protected int | string | array $columnSpan = 'full';
     protected static ?string $maxHeight = '250px';
 

@@ -148,4 +148,8 @@ class BuatBanyakSiswaKelas extends Page implements HasForms
         ];
     }
 
+    public static function canAccess(array $parameters = []): bool
+{
+    return !auth()->user()?->hasRole('guru');
+}
 }

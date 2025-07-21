@@ -18,8 +18,9 @@ use Filament\Tables\Columns\BadgeColumn;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class UserResource extends Resource
+class UserResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = User::class;
     protected static ?int $navigationSort = 1;
@@ -47,7 +48,13 @@ class UserResource extends Resource
                             ->revealable()
                             ->required(fn (string $context): bool => $context === 'create')
                             ->dehydrateStateUsing(fn ($state) => !empty($state) ? Hash::make($state) : null)
-                            ->label('Password')
+                            ->label('Kata Sandi')
+                            ->hint(fn (string $operation): string => $operation === 'edit' 
+                                ? 'Untuk merubah Kata Sandi.' 
+                                : '')
+                                ->helperText(fn (string $operation): string => $operation === 'edit' 
+                                ? 'Bisa dikosongkan jika tidak ingin merubah.' 
+                                : '')
                             ->minLength(6)
                             ->maxLength(25)
                             ->dehydrated(fn ($state) => filled($state)),
@@ -97,6 +104,17 @@ class UserResource extends Resource
             'index' => ListUsers::route('/'),
             'create' => CreateUser::route('/create'),
             'edit' => EditUser::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
         ];
     }
 }

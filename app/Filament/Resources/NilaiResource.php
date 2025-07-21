@@ -28,7 +28,6 @@ use Filament\Facades\Filament;
 class NilaiResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Nilai::class;
-    
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
     public static function getNavigationSort(): ?int
 {
@@ -39,10 +38,12 @@ class NilaiResource extends Resource implements HasShieldPermissions
 }
     public static function getNavigationGroup(): ?string
 {
-    if (auth()->check() && auth()->user()->hasRole('siswa')) {
-        return 'Akademik';
+    if (auth()->check()) {
+        if (auth()->user()->hasRole('siswa') || auth()->user()->hasRole('guru')) {
+            return 'Akademik';
+        }
     }
-    
+
     return 'Manajemen Akademik';
 }
 
@@ -187,23 +188,51 @@ class NilaiResource extends Resource implements HasShieldPermissions
         ];
     }
 
- public static function getPermissionPrefixes(): array
-    {
-        return ['view', 'view_any', 'create', 'update', 'delete'];
-    }
 
     public static function getEloquentQuery(): Builder
 {
-    $query = parent::getEloquentQuery();
+    $user = auth()->user();
 
-    if (Filament::auth()->user()?->hasRole('siswa')) {
-        $siswaId = Filament::auth()->user()?->siswa?->id;
-        $query->whereHas('siswaKelas', function ($q) use ($siswaId) {
-            $q->where('siswa_id', $siswaId);
-        });
+    // Jika super_admin atau admin → bebas lihat semua nilai
+    if ($user->hasRole(['admin', 'super_admin'])) {
+        return parent::getEloquentQuery();
     }
 
-    return $query;
+    // Jika guru → lihat hanya nilai dari mapel yang dia ampu
+    if ($user->hasRole('guru')) {
+        $guru = $user->guru;
+
+        if (!$guru) return parent::getEloquentQuery()->whereRaw('0 = 1'); // kosongin
+
+        $mapelIds = $guru->mapels->pluck('id')->toArray();
+
+        return parent::getEloquentQuery()
+            ->whereIn('mapel_master_id', $mapelIds);
+    }
+
+    // Jika siswa → hanya nilai milik dirinya
+    if ($user->hasRole('siswa')) {
+        $siswaId = $user->siswa?->id;
+
+        return parent::getEloquentQuery()
+            ->whereHas('siswaKelas', function ($query) use ($siswaId) {
+                $query->where('siswa_id', $siswaId);
+            });
+    }
+
+    // Default: kosongin kalau role tidak terdeteksi
+    return parent::getEloquentQuery()->whereRaw('0 = 1');
 }
+
+public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+        ];
+    }
 
 }

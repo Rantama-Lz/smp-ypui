@@ -15,10 +15,10 @@ class Siswa extends Model
         return $this->belongsTo(User::class);
     }
 
-    // public function siswaKelas()
-    // {
-    //     return $this->hasMany(SiswaKelas::class);
-    // }
+    public function siswaKelas()
+    {
+        return $this->hasMany(SiswaKelas::class);
+    }
 
     public function nilai()
     {

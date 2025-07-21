@@ -16,9 +16,10 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\TahunAjaranResource\Pages;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use App\Filament\Resources\TahunAjaranResource\RelationManagers;
 
-class TahunAjaranResource extends Resource
+class TahunAjaranResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = TahunAjaran::class;
 
@@ -90,6 +91,16 @@ class TahunAjaranResource extends Resource
             'index' => Pages\ListTahunAjarans::route('/'),
             'create' => Pages\CreateTahunAjaran::route('/create'),
             'edit' => Pages\EditTahunAjaran::route('/{record}/edit'),
+        ];
+    }
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
         ];
     }
 }

@@ -25,16 +25,26 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\SiswaKelasResource\Pages;
 use App\Filament\Resources\SiswaKelasResource\Pages\NaikKelas;
 use App\Filament\Resources\SiswaKelasResource\RelationManagers;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class SiswaKelasResource extends Resource
+class SiswaKelasResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = SiswaKelas::class;
     protected static ?string $navigationLabel = 'Siswa';
     protected static ?string $label = 'Siswa';
-    protected static ?string $navigationGroup = 'Manajemen Akademik';
     protected static ?int $navigationSort = 1;
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
-       
+    
+    public static function getNavigationGroup(): ?string
+{
+    if (auth()->check()) {
+        if (auth()->user()->hasRole('siswa') || auth()->user()->hasRole('guru')) {
+            return 'Akademik';
+        }
+    }
+
+    return 'Manajemen Akademik';
+}
     
     public static function form(Form $form): Form
     {
@@ -159,13 +169,29 @@ class SiswaKelasResource extends Resource
     }
 
     public static function getPages(): array
+{
+    $pages = [
+        'index' => Pages\ListSiswaKelas::route('/'),
+        'edit' => Pages\EditSiswaKelas::route('/{record}/edit'),
+        'create' => Pages\BuatBanyakSiswaKelas::route('/create'),
+    ];
+
+    if (!auth()->user()?->hasRole(['siswa', 'guru'])) {
+        $pages['naik-kelas'] = NaikKelas::route('/naik-kelas');
+    }
+
+    return $pages;
+}
+
+public static function getPermissionPrefixes(): array
     {
         return [
-            'index' => Pages\ListSiswaKelas::route('/'),
-            'create' => Pages\CreateSiswaKelas::route('/create'),
-            'edit' => Pages\EditSiswaKelas::route('/{record}/edit'),
-            'buat' => Pages\BuatBanyakSiswaKelas::route('/buat'),
-            'naik-kelas' => NaikKelas::route('/naik-kelas'),
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'naik-kelas'
         ];
     }
 }

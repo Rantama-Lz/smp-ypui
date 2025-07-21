@@ -2,7 +2,13 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Guru;
+use App\Models\Nilai;
 use App\Models\Siswa;
+use App\Models\GuruMapel;
+use App\Models\SiswaKelas;
+use Illuminate\Support\Facades\Auth;
+use Filament\Widgets\StatsOverviewWidget\Card;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -10,28 +16,42 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 class CardSiswa extends BaseWidget
 {
     use HasWidgetShield;
-    protected static ?int $sort = 1;
-    protected function getStats(): array
-    {
-        $siswaCount = Siswa::count();
-        $siswalaki = Siswa::where('jenis_kelamin', 'Laki-laki')->count();
-        $siswaperempuan = Siswa::where('jenis_kelamin', 'Perempuan')->count();
-        // $guruCount = Guru::count();
-        // $gurulaki = Guru::where('jenis_kelamin', 'Laki-laki')->count();
-        // $guruperempuan = Guru::where('jenis_kelamin', 'Perempuan')->count();
-        
-        return [
-            
-            Stat::make('Jumlah Siswa', $siswaCount),
-            Stat::make('Siswa Laki - Laki', $siswalaki),
-            Stat::make('Siswa Perempuan', $siswaperempuan),
 
-            // Stat::make('Jumlah Guru', $guruCount),
-            // Stat::make('Guru Laki - Laki', $gurulaki),
-            // Stat::make('Guru Perempuan', $guruperempuan),
-            
-        ];
+    public static function getSort(): int
+{
+    $user = auth()->user();
+
+    if ($user->hasRole('guru')) {
+        return 3;
     }
+
+    if ($user->hasRole('siswa')) {
+        return 3;
+    }
+
+    return 1; // fallback untuk role lain
+}
+    
+   protected function getStats(): array
+{
+    $siswalaki = \App\Models\Siswa::where('jenis_kelamin', 'Laki-laki')
+        ->whereHas('siswaKelas', function ($query) {
+            $query->where('status', 'Aktif');
+        })->count();
+
+    $siswaperempuan = \App\Models\Siswa::where('jenis_kelamin', 'Perempuan')
+        ->whereHas('siswaKelas', function ($query) {
+            $query->where('status', 'Aktif');
+        })->count();
+
+    $SiswaAktif = SiswaKelas::where('status', 'Aktif')->count();
+
+    return [
+        Stat::make('Jumlah Siswa', $SiswaAktif)->icon('heroicon-o-user-group'),
+        Stat::make('Siswa Laki-laki', $siswalaki)->icon('heroicon-s-user'),
+        Stat::make('Siswa Perempuan', $siswaperempuan)->icon('heroicon-o-user'),
+    ];
+}
     protected ?string $heading = 'Statistik Siswa';
 }
 

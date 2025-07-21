@@ -16,8 +16,9 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SppResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\SppResource\RelationManagers;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class SppResource extends Resource
+class SppResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Spp::class;
     protected static ?int $navigationSort = 1;
@@ -129,5 +130,15 @@ class SppResource extends Resource
         ];
     }
 
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+        ];
+    }
     
 }

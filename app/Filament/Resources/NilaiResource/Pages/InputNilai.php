@@ -4,16 +4,17 @@ namespace App\Filament\Resources\NilaiResource\Pages;
 
 use App\Models\Kelas;
 use App\Models\Nilai;
+use Filament\Forms\Form;
 use App\Models\SiswaKelas;
 use App\Models\MapelMaster;
 use App\Models\TahunAjaran;
-use Filament\Forms\Form;
 
 use Filament\Actions\Action;
 use Filament\Resources\Pages\Page;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Radio;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Repeater;
@@ -43,12 +44,22 @@ class InputNilai extends Page implements HasForms
         ->schema([
         Select::make('tahun_ajaran_id')
             ->label('Tahun Ajaran')
-            ->options(TahunAjaran::all()->pluck('nama_tahun', 'id'))
+            ->placeholder('Pilih Tahun Ajaran')
+            ->options(function () {
+                $user = auth()->user();
+
+                if ($user->hasRole(['admin', 'super_admin'])) {
+                    return \App\Models\TahunAjaran::pluck('nama_tahun', 'id');
+                }
+
+                return \App\Models\TahunAjaran::where('active', true)->pluck('nama_tahun', 'id');
+            })
             ->reactive()
             ->required(),
 
         Select::make('kelas_id')
             ->label('Kelas')
+            ->placeholder('Pilih Kelas')
             ->options(Kelas::all()->pluck('nama_kelas', 'id'))
             ->reactive()
             ->required(),
@@ -79,11 +90,26 @@ class InputNilai extends Page implements HasForms
 
             Select::make('mapel_master_id')
                 ->label('Mata Pelajaran')
-                ->options(MapelMaster::all()->pluck('nama_mapel', 'id'))
+                ->options(function () {
+                    $user = Auth::user();
+
+                    if ($user->hasRole(['super_admin','admin'])) {
+                        // Admin: tampilkan semua mapel
+                        return \App\Models\MapelMaster::pluck('nama_mapel', 'id');
+                    }
+
+                    // Guru: tampilkan hanya mapel yang dia ampu
+                    $guru = $user->guru;
+
+                    if (!$guru) return [];
+
+                    return $guru->mapels->pluck('nama_mapel', 'id');
+                })
                 ->searchable()
                 ->required(),
 
             Select::make('semester')
+                ->placeholder('Pilih Semester')
                 ->label('Semester')
                 ->options([
                     'Ganjil' => 'Ganjil',
@@ -180,5 +206,6 @@ class InputNilai extends Page implements HasForms
                 ->color('primary'),
         ];
     }
+    
 }
 

@@ -17,9 +17,10 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\KelasResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\KelasResource\RelationManagers;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use App\Filament\Resources\KelasResource\RelationManagers\SiswaKelasRelationManager;
 
-class KelasResource extends Resource
+class KelasResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Kelas::class;
     protected static ?string $navigationGroup = 'Manajemen Akademik';
@@ -92,6 +93,17 @@ class KelasResource extends Resource
             'index' => Pages\ListKelas::route('/'),
             'create' => Pages\CreateKelas::route('/create'),
             'edit' => Pages\EditKelas::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
         ];
     }
 }

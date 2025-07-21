@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('tagihan_id')->constrained()->cascadeOnDelete();
             $table->date('tanggal_bayar');
-            $table->string('jumlah_bayar');
+            $table->integer('jumlah_bayar');
             $table->string('buktibayar')->nullable();
             $table->enum('metode_bayar', ['Tunai','Transfer']);
             $table->enum('status', ['Menunggu Validasi','Sudah Validasi', 'Ditolak'])->default('Menunggu Validasi');

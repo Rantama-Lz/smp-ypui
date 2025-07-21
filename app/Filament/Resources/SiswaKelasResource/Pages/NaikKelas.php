@@ -57,7 +57,8 @@ class NaikKelas extends Page implements HasForms
                     ->required(),
 
                 Select::make('siswa_ids')
-                    ->label('Pilih Siswa')
+                    ->label('Nama Siswa')
+                    ->placeholder('Pilih Siswa')
                     ->columnSpan(2)
                     ->hint('Pilih Kelas Asal & Tahun Ajaran Asal terlebih dahulu.')
                     ->helperText('Dapat memilih banyak Siswa sekaligus.')
@@ -177,4 +178,8 @@ class NaikKelas extends Page implements HasForms
         ];
     }
 
+    public static function canAccess(array $parameters = []): bool
+{
+    return !auth()->user()?->hasRole('guru');
+}
 }

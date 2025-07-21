@@ -21,8 +21,10 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\GuruResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\GuruResource\RelationManagers;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use App\Filament\Resources\GuruResource\RelationManagers\GuruMapelRelationManager;
 
-class GuruResource extends Resource
+class GuruResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Guru::class;  
     protected static ?int $navigationSort = 2;
@@ -88,12 +90,18 @@ class GuruResource extends Resource
                 ->searchable()
                 ->toggleable(isToggledHiddenByDefault: false)
                 ->label('Nomor Induk Pegawai'),
+                TextColumn::make('mapels.nama_mapel')
+                ->sortable()
+                ->words(5)
+                ->label('Mengampu Mata Pelajaran'),
                 TextColumn::make('jenis_kelamin')
+                ->sortable()
                 ->label('Jenis Kelamin'),
                 TextColumn::make('tgl_lahir')
                 ->toggleable(isToggledHiddenByDefault: false)
                 ->label('Tanggal Lahir'),
                 TextColumn::make('alamat')
+                ->limit('30')
                 ->toggleable(isToggledHiddenByDefault: true),
                 ImageColumn::make('foto')
                 ->toggleable(isToggledHiddenByDefault: false),
@@ -127,7 +135,7 @@ class GuruResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            GuruMapelRelationManager::class,
         ];
     }
 
@@ -137,6 +145,17 @@ class GuruResource extends Resource
             'index' => Pages\ListGurus::route('/'),
             'create' => Pages\CreateGuru::route('/create'),
             'edit' => Pages\EditGuru::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
         ];
     }
 }

@@ -15,30 +15,32 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 class StatsOverview extends BaseWidget
 {
     use HasWidgetShield;
-    protected static ?int $sort = 3;
+    public static function getSort(): int
+{
+    $user = auth()->user();
+
+    if ($user->hasRole('guru')) {
+        return 4;
+    }
+
+    if ($user->hasRole('siswa')) {
+        return 4;
+    }
+
+    return 3; // fallback untuk role lain
+}
     protected function getStats(): array
     {
 
         $mapelCount = MapelMaster::count();
         $kelasCount = Kelas::count();
         $tahunajaranAktif = TahunAjaran::where('active', true)->first();
-        $SiswaAktif = SiswaKelas::where('status', "Aktif")->count();
-        
-        // foreach ($tahunajaranAktif as $tahun) {
-        // $jumlahKelas = Kelas::where('tahun_ajaran_id', $tahun->id)->count();
-    
-        // $stats[] = Stat::make("Tahun Ajaran $tahun->nama_tahun",  "$jumlahKelas Kelas");
-        // }
-        // $stats[] = Stat::make('Jumlah Mata Pelajaran', MapelMaster::count());
-
-        // return $stats;
         return [
-            Stat::make('Tahun Ajaran Aktif', $tahunajaranAktif->nama_tahun),
+            Stat::make('Tahun Ajaran Aktif', $tahunajaranAktif->nama_tahun)->icon('heroicon-o-calendar'),
             Stat::make('Jumlah Kelas', $kelasCount),
             Stat::make('Jumlah Mata Pelajaran', $mapelCount),
         ];
         
         
     }
-    protected ?string $heading = 'Statistik Akademik';
 }

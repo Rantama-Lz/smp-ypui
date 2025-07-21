@@ -2,18 +2,19 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MapelMasterResource\Pages;
-use App\Filament\Resources\MapelMasterResource\RelationManagers;
-use App\Models\MapelMaster;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\MapelMaster;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\MapelMasterResource\Pages;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use App\Filament\Resources\MapelMasterResource\RelationManagers;
 
-class MapelMasterResource extends Resource
+class MapelMasterResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = MapelMaster::class;
     protected static ?string $label = 'Mata Pelajaran';
@@ -75,6 +76,16 @@ class MapelMasterResource extends Resource
             'index' => Pages\ListMapelMasters::route('/'),
             'create' => Pages\CreateMapelMaster::route('/create'),
             'edit' => Pages\EditMapelMaster::route('/{record}/edit'),
+        ];
+    }
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
         ];
     }
 }

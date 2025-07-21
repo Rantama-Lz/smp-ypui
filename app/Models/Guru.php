@@ -18,9 +18,13 @@ class Guru extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-    public function mapel()
+    public function mapels()
+{
+    return $this->belongsToMany(MapelMaster::class, 'guru_mapel', 'guru_id', 'mapel_master_id');
+}
+    public function gurumapel()
     {
-        return $this->hasMany(MataPelajaran::class, 'mapel_id', 'id');
+    return $this->hasMany(GuruMapel::class);
     }
 
     protected static function booted(): void

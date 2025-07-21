@@ -53,40 +53,33 @@ class PembayaranResource extends Resource implements HasShieldPermissions
                 ->placeholder('Nama Siswa - Tahun Ajaran - Bulan - Nominal')
                 ->label('Tagihan')
                 ->options(function () {
-                    $user = Auth::user();
-                    if ($user->hasRole('siswa')) {
-                        $siswaId = $user->siswa?->id;
+    $user = Auth::user();
 
-                        if (!$siswaId) {
-                            return [];
-                        }
+    $query = \App\Models\Tagihan::with(['siswaKelas.siswa', 'siswaKelas.tahunajaran', 'spp'])
+        ->where('status', 'Belum Bayar');
 
-                        return \App\Models\Tagihan::with(['siswaKelas.siswa', 'spp'])
-                            ->whereHas('siswaKelas', function ($query) use ($siswaId) {
-                                $query->where('siswa_id', $siswaId);
-                            })
-                            ->get()
-                            ->mapWithKeys(function ($tagihan) {
-                                $nama = $tagihan->siswaKelas->siswa->nama ?? '';
-                                $tahunajaran = $tagihan->siswaKelas->tahunajaran->nama_tahun ?? '';
-                                $bulan = $tagihan->spp->bulan ?? '';
-                                $nominal = 'Rp ' . number_format($tagihan->spp->nominal ?? 0, 0, ',', '.');
+    if ($user->hasRole('siswa')) {
+        $siswaId = $user->siswa?->id;
 
-                                return [$tagihan->id => "$nama - $tahunajaran - $bulan - $nominal"];
-                            });
-                    }
+        if (!$siswaId) {
+            return [];
+        }
 
-                    return \App\Models\Tagihan::with(['siswaKelas.siswa', 'spp'])
-                        ->get()
-                        ->mapWithKeys(function ($tagihan) {
-                            $nama = $tagihan->siswaKelas->siswa->nama ?? '';
-                            $bulan = $tagihan->spp->bulan ?? '';
-                            $tahunajaran = $tagihan->siswaKelas->tahunajaran->nama_tahun ?? '';
-                            $nominal = 'Rp ' . number_format($tagihan->spp->nominal ?? 0, 0, ',', '.');
+        $query->whereHas('siswaKelas', function ($q) use ($siswaId) {
+            $q->where('siswa_id', $siswaId);
+        });
+    }
 
-                            return [$tagihan->id => "$nama - $tahunajaran - $bulan - $nominal"];
-                        });
-                })
+    return $query->get()
+        ->mapWithKeys(function ($tagihan) {
+            $nama = $tagihan->siswaKelas->siswa->nama ?? '-';
+            $tahunajaran = $tagihan->siswaKelas->tahunajaran->nama_tahun ?? '-';
+            $bulan = $tagihan->spp->bulan ?? '-'; 
+            $nominal = 'Rp ' . number_format($tagihan->spp->nominal ?? 0, 0, ',', '.');
+
+            return [$tagihan->id => "$nama - $tahunajaran - $bulan - $nominal"];
+        });
+})
                 ->searchable(['siswaKelas.nama'])
                 ->preload()
                 ->required(),
@@ -267,6 +260,12 @@ class PembayaranResource extends Resource implements HasShieldPermissions
 }
     public static function getPermissionPrefixes(): array
     {
-        return ['view', 'view_any', 'create', 'update', 'delete'];
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+        ];
     }
 }
