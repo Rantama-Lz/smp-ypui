@@ -58,11 +58,12 @@ class SiswaResource extends Resource implements HasShieldPermissions
                 DatePicker::make('tgl_lahir')
                 ->required()
                 ->label('Tanggal Lahir'),
-                // TextInput::make('nis')
-                // ->maxLength(10)
-                // ->minLength(10)
-                // ->required()
-                // ->label('Nomor Induk Siswa'),
+                TextInput::make('nis')
+                ->maxLength(10)
+                ->minLength(10)
+                ->hiddenOn('create')
+                ->readOnly()
+                ->label('Nomor Induk Siswa'),
                 Select::make('jenis_kelamin')
                 ->placeholder('Pilih Jenis Kelamin')
                 ->required()
@@ -123,7 +124,6 @@ class SiswaResource extends Resource implements HasShieldPermissions
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
             ])
             ->defaultSort('nama', 'asc')
             ->paginated([10, 25, 50, 100])

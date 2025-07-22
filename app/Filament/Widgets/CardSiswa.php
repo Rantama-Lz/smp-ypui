@@ -47,7 +47,7 @@ class CardSiswa extends BaseWidget
     $SiswaAktif = SiswaKelas::where('status', 'Aktif')->count();
 
     return [
-        Stat::make('Jumlah Siswa', $SiswaAktif)->icon('heroicon-o-user-group'),
+        Stat::make('Jumlah Siswa Aktif', $SiswaAktif)->icon('heroicon-o-user-group'),
         Stat::make('Siswa Laki-laki', $siswalaki)->icon('heroicon-s-user'),
         Stat::make('Siswa Perempuan', $siswaperempuan)->icon('heroicon-o-user'),
     ];

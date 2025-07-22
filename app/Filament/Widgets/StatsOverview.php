@@ -14,6 +14,7 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
 class StatsOverview extends BaseWidget
 {
+    protected ?string $heading = 'Statistik Akademik';
     use HasWidgetShield;
     public static function getSort(): int
 {
@@ -37,8 +38,8 @@ class StatsOverview extends BaseWidget
         $tahunajaranAktif = TahunAjaran::where('active', true)->first();
         return [
             Stat::make('Tahun Ajaran Aktif', $tahunajaranAktif->nama_tahun)->icon('heroicon-o-calendar'),
-            Stat::make('Jumlah Kelas', $kelasCount),
-            Stat::make('Jumlah Mata Pelajaran', $mapelCount),
+            Stat::make('Jumlah Kelas', $kelasCount)->icon('heroicon-o-building-library'),
+            Stat::make('Jumlah Mata Pelajaran', $mapelCount)->icon('heroicon-o-book-open'),
         ];
         
         

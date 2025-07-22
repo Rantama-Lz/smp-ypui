@@ -145,9 +145,11 @@ class PembayaranResource extends Resource implements HasShieldPermissions
                 ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
                 TextColumn::make('tanggal_bayar')
                 ->date()
-                ->label('Tanggal'),
+                ->label('Tanggal')
+                ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('metode_bayar')
-                ->label('Metode Pembayaran'),
+                ->label('Metode Pembayaran')
+                ->toggleable(isToggledHiddenByDefault: true),
                 ImageColumn::make('buktibayar')
                 ->label('Bukti Pembayaran')
                 ->width(80),
