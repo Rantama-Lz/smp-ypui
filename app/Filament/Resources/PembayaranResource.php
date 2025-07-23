@@ -20,6 +20,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\PembayaranResource\Pages;
@@ -140,6 +141,7 @@ class PembayaranResource extends Resource implements HasShieldPermissions
                 ->searchable()
                 ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('tagihan.spp.bulan')
+                ->searchable()
                 ->label('Bulan'),
                 TextColumn::make('tagihan.spp.nominal')->label('Nominal')
                 ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
@@ -153,7 +155,9 @@ class PembayaranResource extends Resource implements HasShieldPermissions
                 ImageColumn::make('buktibayar')
                 ->label('Bukti Pembayaran')
                 ->width(80),
-                BadgeColumn::make('status')->colors([
+                BadgeColumn::make('status')
+                ->searchable()
+                ->colors([
                     'warning' => 'Menunggu Validasi',
                     'success' => 'Sudah Validasi',
                     'danger' => 'Ditolak',
@@ -168,7 +172,9 @@ class PembayaranResource extends Resource implements HasShieldPermissions
                 ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('tahun_ajaran_id')
+                ->relationship('tagihan.siswaKelas.tahunajaran', 'nama_tahun')
+                ->label('Tahun Ajaran'),
             ])
             ->actions([
                 Tables\Actions\Action::make('validasi')
@@ -190,7 +196,7 @@ class PembayaranResource extends Resource implements HasShieldPermissions
                         ]);
 
                         Notification::make()
-                            ->title('Pembayaran divalidasi')
+                            ->title('Berhasil Memvalidasi Pembayaran')
                             ->success()
                             ->send();
                     }),
@@ -211,7 +217,7 @@ class PembayaranResource extends Resource implements HasShieldPermissions
                         ]);
 
                         Notification::make()
-                            ->title('Pembayaran ditolak')
+                            ->title('Pembayaran telah di Tolak')
                             ->danger()
                             ->send();
                     }),
