@@ -207,7 +207,10 @@ class NilaiResource extends Resource implements HasShieldPermissions
         $mapelIds = $guru->mapels->pluck('id')->toArray();
 
         return parent::getEloquentQuery()
-            ->whereIn('mapel_master_id', $mapelIds);
+            ->whereIn('mapel_master_id', $mapelIds)
+            ->whereHas('siswaKelas.siswa', function ($query) {
+                $query->where('status', 'aktif'); // Ganti dengan 1 jika pakai boolean
+            });
     }
 
     // Jika siswa → hanya nilai milik dirinya

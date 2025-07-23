@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use Closure;
 use Filament\Forms;
 use Filament\Tables;
+use App\Models\Kelas;
 use Filament\Forms\Form;
 use App\Models\SiswaKelas;
 use Filament\Tables\Table;
@@ -58,7 +59,17 @@ class SiswaKelasResource extends Resource implements HasShieldPermissions
                     ->required(),
                 Forms\Components\Select::make('kelas_id')
                     ->label('Kelas')
-                    ->relationship('kelas', 'nama_kelas')
+                    ->options(function (callable $get, $record) {
+                    
+                    $currentKelas = $record?->kelas;
+
+                    if (!$currentKelas) {
+                        return Kelas::all()->pluck('nama_kelas', 'id');
+                    }
+
+                        return Kelas::where('tingkat_kelas_id', $currentKelas->tingkat_kelas_id)
+                            ->pluck('nama_kelas', 'id');
+                    })
                     ->required(),
                 Select::make('status')
                     ->label('Status Siswa')
@@ -145,7 +156,7 @@ class SiswaKelasResource extends Resource implements HasShieldPermissions
                     foreach ($records as $record) {
                         if ($record->status === 'Aktif') {
                             $record->update([
-                                'status' => 'Lulus', // Sesuaikan dengan enum kamu
+                                'status' => 'Lulus',
                             ]);
                             $updatedCount++;
                         }
@@ -181,6 +192,16 @@ class SiswaKelasResource extends Resource implements HasShieldPermissions
     }
 
     return $pages;
+}
+public static function getEloquentQuery(): Builder
+{
+    $query = parent::getEloquentQuery();
+
+    if (auth()->check() && auth()->user()->hasRole('guru')) {
+        $query->where('status', 'Aktif');
+    }
+
+    return $query;
 }
 
 public static function getPermissionPrefixes(): array
