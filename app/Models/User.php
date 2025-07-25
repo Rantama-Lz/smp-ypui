@@ -58,4 +58,23 @@ class User extends Authenticatable
         return $this->hasOne(Guru::class);
     }
 
+    protected static function booted(): void
+{
+    static::updated(function ($user) {
+        if ($user->isDirty('name')) {
+           
+            if ($user->siswa) {
+                $user->siswa->update([
+                    'nama' => $user->name,
+                ]);
+            }
+
+            if ($user->guru) {
+                $user->guru->update([
+                    'nama' => $user->name,
+                ]);
+            }
+        }
+    });
+}
 }

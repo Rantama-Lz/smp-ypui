@@ -212,6 +212,7 @@ public static function getPermissionPrefixes(): array
             'create',
             'update',
             'delete',
+            'delete_any',
             'naik-kelas'
         ];
     }

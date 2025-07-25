@@ -130,7 +130,7 @@ class SppResource extends Resource implements HasShieldPermissions
         ];
     }
 
-    public static function getPermissionPrefixes(): array
+   public static function getPermissionPrefixes(): array
     {
         return [
             'view',
@@ -138,6 +138,7 @@ class SppResource extends Resource implements HasShieldPermissions
             'create',
             'update',
             'delete',
+            'delete_any',
         ];
     }
     

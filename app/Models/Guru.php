@@ -35,5 +35,12 @@ class Guru extends Model
             $guru->user->delete();
         }
     });
+    static::updated(function ($guru) {
+        if ($guru->user) {
+            $guru->user->update([
+                'name' => $guru->nama,
+            ]);
+        }
+    });
 }
 }

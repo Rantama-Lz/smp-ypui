@@ -69,5 +69,5 @@ class AvgNilai extends BaseWidget
         return Auth::user()?->hasRole('guru');
     }
 
-     protected ?string $heading = 'Nilai Rata-rata';
+     protected ?string $heading = 'Rata-rata Nilai Siswa';
 }

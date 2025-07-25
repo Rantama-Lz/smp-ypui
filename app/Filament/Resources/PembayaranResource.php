@@ -22,6 +22,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\PembayaranResource\Pages;
 use App\Filament\Resources\PembayaranResource\RelationManagers;
@@ -229,16 +230,37 @@ class PembayaranResource extends Resource implements HasShieldPermissions
                     ->visible(fn ($record) => $record->buktibayar)
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                    DeleteBulkAction::make()
+                    ->action(function ($records, $data) {
+                        $tidakBisaDihapus = $records->filter(function ($record) {
+                            return $record->status === 'Sudah Validasi';
+                        });
+
+                        if ($tidakBisaDihapus->isNotEmpty()) {
+                            Notification::make()
+                                ->title('Ada data yang tidak bisa dihapus karena sudah divalidasi.')
+                                ->danger()
+                                ->send();
+
+                            // Batalkan proses hapus
+                            return;
+                        }
+
+                        // Kalau semua aman, baru hapus
+                        $records->each->delete();
+
+                        Notification::make()
+                            ->title('Data berhasil dihapus.')
+                            ->success()
+                            ->send();
+                        })
+                    ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
+            
         ];
     }
 
@@ -274,6 +296,7 @@ class PembayaranResource extends Resource implements HasShieldPermissions
             'create',
             'update',
             'delete',
+            'delete_any',
         ];
     }
 }

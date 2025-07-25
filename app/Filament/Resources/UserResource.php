@@ -15,6 +15,7 @@ use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
@@ -63,15 +64,20 @@ class UserResource extends Resource implements HasShieldPermissions
                 Section::make('Pilih Role')
                     ->schema([
                         Select::make('roles')
-                            ->label('Nama Role')
-                            ->relationship('roles', 'name',
-                                fn ($query) => $query->whereIn('name', ['super_admin', 'admin'])
-                            )
-                            ->multiple()
-                            ->placeholder('Pilih Role')
-                            ->preload()
-                            ->searchable()
-                            ->required()
+                        ->label('Nama Role')
+                        ->relationship(
+                            'roles',
+                            'name',
+                            fn ($query) => 
+                                auth()->user()->hasRole('admin')
+                                    ? $query->whereIn('name', ['siswa', 'guru'])
+                                    : $query
+                        )
+                        ->multiple()
+                        ->placeholder('Pilih Role')
+                        ->preload()
+                        ->searchable()
+                        ->required()
                     ]),
             ]);
     }
@@ -90,12 +96,50 @@ class UserResource extends Resource implements HasShieldPermissions
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                ->visible(function ($record) {
+                        $currentUser = auth()->user();
+
+                        if ($currentUser->hasRole('admin')) {
+                            return !$record->hasRole('super_admin') && !$record->hasRole('admin');
+                        }
+
+                        return true;
+                    }),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(function ($record) {
+                        $currentUser = auth()->user();
+
+                        if ($currentUser->hasRole('admin')) {
+                            return !$record->hasRole('super_admin') && !$record->hasRole('admin');
+                        }
+
+                        return true;
+                    })
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]);
+                DeleteBulkAction::make()
+                ->action(function ($records) {
+                    $currentUser = auth()->user();
+
+                    if ($currentUser->hasRole('admin')) {
+                        $diblokir = $records->filter(function ($record) {
+                            return $record->hasRole('super_admin') || $record->hasRole('admin');
+                        });
+
+                                if ($diblokir->isNotEmpty()) {
+                                    \Filament\Notifications\Notification::make()
+                                        ->title('Beberapa akun tidak bisa dihapus karena memiliki role super_admin / admin.')
+                                        ->danger()
+                                        ->send();
+
+                                    return;
+                                }
+                            }
+
+                            $records->each->delete();
+                        })
+                ]);
     }
 
     public static function getPages(): array
@@ -115,6 +159,7 @@ class UserResource extends Resource implements HasShieldPermissions
             'create',
             'update',
             'delete',
+            'delete_any',
         ];
     }
 }

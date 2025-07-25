@@ -193,27 +193,24 @@ class NilaiResource extends Resource implements HasShieldPermissions
 {
     $user = auth()->user();
 
-    // Jika super_admin atau admin → bebas lihat semua nilai
     if ($user->hasRole(['admin', 'super_admin'])) {
         return parent::getEloquentQuery();
     }
 
-    // Jika guru → lihat hanya nilai dari mapel yang dia ampu
     if ($user->hasRole('guru')) {
         $guru = $user->guru;
 
-        if (!$guru) return parent::getEloquentQuery()->whereRaw('0 = 1'); // kosongin
+        if (!$guru) return parent::getEloquentQuery()->whereRaw('0 = 1');
 
         $mapelIds = $guru->mapels->pluck('id')->toArray();
 
         return parent::getEloquentQuery()
             ->whereIn('mapel_master_id', $mapelIds)
             ->whereHas('siswaKelas.siswa', function ($query) {
-                $query->where('status', 'aktif'); // Ganti dengan 1 jika pakai boolean
+                $query->where('status', 'aktif'); 
             });
     }
 
-    // Jika siswa → hanya nilai milik dirinya
     if ($user->hasRole('siswa')) {
         $siswaId = $user->siswa?->id;
 
@@ -222,8 +219,6 @@ class NilaiResource extends Resource implements HasShieldPermissions
                 $query->where('siswa_id', $siswaId);
             });
     }
-
-    // Default: kosongin kalau role tidak terdeteksi
     return parent::getEloquentQuery()->whereRaw('0 = 1');
 }
 
@@ -235,6 +230,7 @@ public static function getPermissionPrefixes(): array
             'create',
             'update',
             'delete',
+            'delete_any',
         ];
     }
 

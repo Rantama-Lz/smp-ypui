@@ -45,5 +45,13 @@ protected static function booted(): void
             $siswa->user->delete();
         }
     });
+    static::updated(function ($siswa) {
+        if ($siswa->user) {
+            $siswa->user->update([
+                'name' => $siswa->nama,
+            ]);
+        }
+    });
 }
+
 }

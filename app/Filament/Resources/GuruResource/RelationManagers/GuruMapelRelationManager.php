@@ -40,7 +40,7 @@ class GuruMapelRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                 ->label('Tambah')
-                ->modalHeading('Tambah Mapel yang Diampu')
+                ->modalHeading('Tambah Mata Pelajaran yang Diampu')
                 ->modalButton('Simpan') 
                     ])
             ->actions([

@@ -29,6 +29,7 @@ class RekapNilai extends BaseWidget
 
     return 10; // fallback untuk role lain
 }
+    
     protected ?string $heading = 'Akademik';
     protected function getCards(): array
     {
@@ -46,29 +47,35 @@ class RekapNilai extends BaseWidget
     $namaMapel = implode(', ', $mapelList); // ✅ Gabung jadi string
 
     return [
-        Card::make("Kamu Guru Mata Pelajaran", "")
+        Card::make("Mata Pelajaran yang Anda Ampu", "")
             ->description($namaMapel ?: '-')
             ->icon('heroicon-o-book-open'),
-        Stat::make('Tahun Ajaran Aktif', $tahunajaranAktif?->nama_tahun ?? '-')
+        Stat::make('Tahun Ajaran', $tahunajaranAktif?->nama_tahun ?? '-')
             ->icon('heroicon-s-calendar'),
     ];
 }
 
-        if ($user->hasRole('siswa')) {
+       if ($user->hasRole('siswa')) {
     $siswaId = $user->siswa?->id;
     $tahunajaranAktif = TahunAjaran::where('active', true)->first();
+    $siswaKelasAktif = \App\Models\SiswaKelas::with('kelas')
+        ->where('siswa_id', $siswaId)
+        ->where('tahun_ajaran_id', $tahunajaranAktif?->id)
+        ->first();
 
-    // Ambil nilai tertinggi
-    $nilaiTertinggi = Nilai::whereHas('siswaKelas', function ($query) use ($siswaId) {
-            $query->where('siswa_id', $siswaId);
+    // Ambil nilai tertinggi dari tahun ajaran aktif
+    $nilaiTertinggi = Nilai::whereHas('siswaKelas', function ($query) use ($siswaId, $tahunajaranAktif) {
+            $query->where('siswa_id', $siswaId)
+                  ->where('tahun_ajaran_id', $tahunajaranAktif?->id);
         })
         ->with('mapelMaster')
         ->orderByDesc('nilai_akhir')
         ->first();
 
-    // Ambil nilai terendah
-    $nilaiTerendah = Nilai::whereHas('siswaKelas', function ($query) use ($siswaId) {
-            $query->where('siswa_id', $siswaId);
+    // Ambil nilai terendah dari tahun ajaran aktif
+    $nilaiTerendah = Nilai::whereHas('siswaKelas', function ($query) use ($siswaId, $tahunajaranAktif) {
+            $query->where('siswa_id', $siswaId)
+                  ->where('tahun_ajaran_id', $tahunajaranAktif?->id);
         })
         ->with('mapelMaster')
         ->orderBy('nilai_akhir')
@@ -76,21 +83,23 @@ class RekapNilai extends BaseWidget
 
     return [
         Card::make(
-            'Nilai Tertinggi',$nilaiTertinggi?->nilai_akhir ?? '-')
-            ->description(($nilaiTertinggi?->mapelMaster?->nama_mapel ?? '-'))
+            'Nilai Tertinggi', $nilaiTertinggi?->nilai_akhir ?? '-')
+            ->description($nilaiTertinggi?->mapelMaster?->nama_mapel ?? '-')
             ->icon('heroicon-o-arrow-trending-up'),
 
         Card::make(
-            'Nilai Terendah',$nilaiTerendah?->nilai_akhir ?? '-')
-            ->description(($nilaiTerendah?->mapelMaster?->nama_mapel ?? '-'))
+            'Nilai Terendah', $nilaiTerendah?->nilai_akhir ?? '-')
+            ->description($nilaiTerendah?->mapelMaster?->nama_mapel ?? '-')
             ->icon('heroicon-o-arrow-trending-down'),
-
-        Stat::make('Tahun Ajaran Aktif', $tahunajaranAktif?->nama_tahun ?? '-')
-            ->icon('heroicon-o-calendar'),
+        Stat::make('Kelas', $siswaKelasAktif?->kelas?->nama_kelas ?? '-')
+            ->icon('heroicon-o-building-library')
+            ->description('Kelas saat ini'),    
+        Stat::make('Tahun Ajaran', $tahunajaranAktif?->nama_tahun ?? '-')
+            ->icon('heroicon-o-calendar')
+            ->description('Tahun Ajaran saat ini'),  
     ];
 }
 
-        // Kalau admin / lainnya kosongin
         return [];
         
     }

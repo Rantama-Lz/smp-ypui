@@ -81,7 +81,8 @@ class TagihanResource extends Resource implements HasShieldPermissions
                 ->afterStateUpdated(function ($state, callable $set) {
                     $siswa = \App\Models\Siswa::find($state);
                     $set('nis', $siswa?->nis);
-                }),
+                })
+                ->disabled(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord),
 
                 Select::make('spp_id')
                 ->placeholder('Bulan - Nominal - Tahun Ajaran')
@@ -90,7 +91,8 @@ class TagihanResource extends Resource implements HasShieldPermissions
                 ->getOptionLabelFromRecordUsing(fn ($record) => $record->bulan.' - Rp '.number_format($record->nominal, 0, ',', '.'). ' - ' . ($record->tahunajaran->nama_tahun ?? ''))
                 ->searchable()
                 ->preload()
-                ->required(),
+                ->required()
+                ->disabled(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord),
                 
                 Select::make('status')
                 ->label('Status')
@@ -139,6 +141,7 @@ class TagihanResource extends Resource implements HasShieldPermissions
                 ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 SelectFilter::make('tahun_ajaran_id')->relationship('siswaKelas.tahunajaran', 'nama_tahun'),
             ])
@@ -188,6 +191,13 @@ public static function getEloquentQuery(): Builder
 }
 public static function getPermissionPrefixes(): array
     {
-        return ['view', 'view_any', 'create', 'update', 'delete'];
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+        ];
     }
 }

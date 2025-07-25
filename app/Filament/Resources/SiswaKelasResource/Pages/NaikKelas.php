@@ -160,9 +160,8 @@ class NaikKelas extends Page implements HasForms
 
         Notification::make()
             ->title('Kenaikan Kelas Berhasil')
-            ->body(count($siswaNaik) . ' siswa dinaikkan ke ‘'. 
-                   $kelasTujuan->nama_kelas .' ('.
-                   $tahunTujuan->nama .')’' . "\n\n- ".implode("\n- ", $siswaNaik))
+            ->body(count($siswaNaik) . ' siswa dinaikkan ke Kelas '. 
+                   $kelasTujuan->nama_kelas)
             ->success()
             ->send();
 

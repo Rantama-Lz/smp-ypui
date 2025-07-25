@@ -93,7 +93,7 @@ class TahunAjaranResource extends Resource implements HasShieldPermissions
             'edit' => Pages\EditTahunAjaran::route('/{record}/edit'),
         ];
     }
-    public static function getPermissionPrefixes(): array
+   public static function getPermissionPrefixes(): array
     {
         return [
             'view',
@@ -101,6 +101,7 @@ class TahunAjaranResource extends Resource implements HasShieldPermissions
             'create',
             'update',
             'delete',
+            'delete_any',
         ];
     }
 }
