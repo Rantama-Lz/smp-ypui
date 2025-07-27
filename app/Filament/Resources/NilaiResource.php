@@ -149,7 +149,7 @@ class NilaiResource extends Resource implements HasShieldPermissions
                 ->dateTime()
                 ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('siswaKelas.kelas.nama_kelas' , 'desc')
+            ->defaultSort('created_at' , 'desc')
             ->filters([
                 SelectFilter::make('siswa_kelas_id')
                 ->label('Kelas')

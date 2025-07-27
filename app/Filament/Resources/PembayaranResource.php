@@ -165,13 +165,15 @@ class PembayaranResource extends Resource implements HasShieldPermissions
                 ]),
                 TextColumn::make('created_at')
                 ->dateTime()
+                ->label('Dibuat pada')
                 ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                 ->dateTime()
+                ->label('Diperbarui pada')
                 ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ])->defaultSort('created_at' , 'desc')
             ->filters([
                 SelectFilter::make('tahun_ajaran_id')
                 ->relationship('tagihan.siswaKelas.tahunajaran', 'nama_tahun')

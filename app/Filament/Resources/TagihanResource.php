@@ -134,10 +134,12 @@ class TagihanResource extends Resource implements HasShieldPermissions
                 ])->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
+                    ->label('Dibuat pada')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                 ->dateTime()
+                ->label('Diperbarui pada')
                 ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),
             ])

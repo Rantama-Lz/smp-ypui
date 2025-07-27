@@ -76,13 +76,15 @@ class SppResource extends Resource implements HasShieldPermissions
                 ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
                 TextColumn::make('created_at')
                 ->dateTime()
+                ->label('Dibuat pada')
                 ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                 ->dateTime()
+                ->label('Diperbarui pada')
                 ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ])->defaultSort('created_at' , 'desc')
             ->filters([
                 SelectFilter::make('tahun_ajaran_id')
                     ->relationship('tahunajaran', 'nama_tahun')

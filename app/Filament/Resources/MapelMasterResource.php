@@ -42,11 +42,13 @@ class MapelMasterResource extends Resource implements HasShieldPermissions
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
+                    ->label('Dibuat pada')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
+                    ->label('Diperbarui pada')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('nama_mapel','asc')

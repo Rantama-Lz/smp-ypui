@@ -91,6 +91,16 @@ class UserResource extends Resource implements HasShieldPermissions
                 BadgeColumn::make('roles.name')
                     ->label('Roles')
                     ->colors(['primary']),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->label('Dibuat pada')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->label('Diperbarui pada')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
