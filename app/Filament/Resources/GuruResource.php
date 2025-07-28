@@ -125,9 +125,9 @@ class GuruResource extends Resource implements HasShieldPermissions
             ->defaultSort('nama', 'asc')
             ->paginated([10, 25, 50, 100])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                
             ]);
     }
 

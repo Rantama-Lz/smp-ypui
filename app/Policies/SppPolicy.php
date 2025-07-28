@@ -63,7 +63,7 @@ class SppPolicy
      */
     public function forceDelete(User $user, Spp $spp): bool
     {
-        return $user->can('force_delete_spp');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class SppPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_spp');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class SppPolicy
      */
     public function restore(User $user, Spp $spp): bool
     {
-        return $user->can('restore_spp');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class SppPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_spp');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class SppPolicy
      */
     public function replicate(User $user, Spp $spp): bool
     {
-        return $user->can('replicate_spp');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class SppPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_spp');
+        return $user->can('{{ Reorder }}');
     }
 }

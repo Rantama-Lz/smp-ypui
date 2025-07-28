@@ -20,7 +20,9 @@ class CardSiswa extends BaseWidget
     public static function getSort(): int
 {
     $user = auth()->user();
-
+    if(!$user) {
+        return 1;
+    }
     if ($user->hasRole('guru')) {
         return 3;
     }

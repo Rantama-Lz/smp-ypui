@@ -59,7 +59,7 @@ class NaikKelas extends Page implements HasForms
                 Select::make('siswa_ids')
                     ->label('Nama Siswa')
                     ->placeholder('Pilih Siswa')
-                    ->columnSpan(2)
+                    ->columnSpanFull()
                     ->hint('Pilih Kelas Asal & Tahun Ajaran Asal terlebih dahulu.')
                     ->helperText('Dapat memilih banyak Siswa sekaligus.')
                     ->multiple()
@@ -80,6 +80,7 @@ class NaikKelas extends Page implements HasForms
                             ->get()
                             ->mapWithKeys(fn ($sk) => [$sk->siswa_id => $sk->siswa->nama]);
                     })
+                    ->disabled(fn (callable $get) => ! $get('kelas_asal_id') || ! $get('tahun_asal_id'))
                     ->required(),
 
                 Select::make('kelas_tujuan_id')

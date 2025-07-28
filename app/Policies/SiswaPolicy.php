@@ -63,7 +63,7 @@ class SiswaPolicy
      */
     public function forceDelete(User $user, Siswa $siswa): bool
     {
-        return $user->can('force_delete_siswa');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class SiswaPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_siswa');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class SiswaPolicy
      */
     public function restore(User $user, Siswa $siswa): bool
     {
-        return $user->can('restore_siswa');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class SiswaPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_siswa');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class SiswaPolicy
      */
     public function replicate(User $user, Siswa $siswa): bool
     {
-        return $user->can('replicate_siswa');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class SiswaPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_siswa');
+        return $user->can('{{ Reorder }}');
     }
 }

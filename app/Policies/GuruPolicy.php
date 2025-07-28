@@ -63,7 +63,7 @@ class GuruPolicy
      */
     public function forceDelete(User $user, Guru $guru): bool
     {
-        return $user->can('force_delete_guru');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class GuruPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_guru');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class GuruPolicy
      */
     public function restore(User $user, Guru $guru): bool
     {
-        return $user->can('restore_guru');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class GuruPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_guru');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class GuruPolicy
      */
     public function replicate(User $user, Guru $guru): bool
     {
-        return $user->can('replicate_guru');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class GuruPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_guru');
+        return $user->can('{{ Reorder }}');
     }
 }

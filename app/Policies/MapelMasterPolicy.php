@@ -63,7 +63,7 @@ class MapelMasterPolicy
      */
     public function forceDelete(User $user, MapelMaster $mapelMaster): bool
     {
-        return $user->can('force_delete_mapel::master');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class MapelMasterPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_mapel::master');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class MapelMasterPolicy
      */
     public function restore(User $user, MapelMaster $mapelMaster): bool
     {
-        return $user->can('restore_mapel::master');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class MapelMasterPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_mapel::master');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class MapelMasterPolicy
      */
     public function replicate(User $user, MapelMaster $mapelMaster): bool
     {
-        return $user->can('replicate_mapel::master');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class MapelMasterPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_mapel::master');
+        return $user->can('{{ Reorder }}');
     }
 }

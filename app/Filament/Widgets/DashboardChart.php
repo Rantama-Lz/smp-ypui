@@ -13,7 +13,9 @@ class DashboardChart extends ChartWidget
     public static function getSort(): int
 {
     $user = auth()->user();
-
+    if(!$user) {
+        return 2;
+    }
     if ($user->hasRole('guru')) {
         return 4;
     }

@@ -72,9 +72,9 @@ class TahunAjaranResource extends Resource implements HasShieldPermissions
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
+            
             ]);
     }
 

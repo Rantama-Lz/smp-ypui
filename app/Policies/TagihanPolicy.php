@@ -63,7 +63,7 @@ class TagihanPolicy
      */
     public function forceDelete(User $user, Tagihan $tagihan): bool
     {
-        return $user->can('force_delete_tagihan');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class TagihanPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_tagihan');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class TagihanPolicy
      */
     public function restore(User $user, Tagihan $tagihan): bool
     {
-        return $user->can('restore_tagihan');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class TagihanPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_tagihan');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class TagihanPolicy
      */
     public function replicate(User $user, Tagihan $tagihan): bool
     {
-        return $user->can('replicate_tagihan');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class TagihanPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_tagihan');
+        return $user->can('{{ Reorder }}');
     }
 }

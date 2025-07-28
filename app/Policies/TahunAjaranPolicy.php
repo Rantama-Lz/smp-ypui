@@ -63,7 +63,7 @@ class TahunAjaranPolicy
      */
     public function forceDelete(User $user, TahunAjaran $tahunAjaran): bool
     {
-        return $user->can('force_delete_tahun::ajaran');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class TahunAjaranPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_tahun::ajaran');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class TahunAjaranPolicy
      */
     public function restore(User $user, TahunAjaran $tahunAjaran): bool
     {
-        return $user->can('restore_tahun::ajaran');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class TahunAjaranPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_tahun::ajaran');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class TahunAjaranPolicy
      */
     public function replicate(User $user, TahunAjaran $tahunAjaran): bool
     {
-        return $user->can('replicate_tahun::ajaran');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class TahunAjaranPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_tahun::ajaran');
+        return $user->can('{{ Reorder }}');
     }
 }

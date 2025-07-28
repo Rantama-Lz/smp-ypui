@@ -63,7 +63,7 @@ class PembayaranPolicy
      */
     public function forceDelete(User $user, Pembayaran $pembayaran): bool
     {
-        return $user->can('force_delete_pembayaran');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class PembayaranPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_pembayaran');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class PembayaranPolicy
      */
     public function restore(User $user, Pembayaran $pembayaran): bool
     {
-        return $user->can('restore_pembayaran');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class PembayaranPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_pembayaran');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class PembayaranPolicy
      */
     public function replicate(User $user, Pembayaran $pembayaran): bool
     {
-        return $user->can('replicate_pembayaran');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class PembayaranPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_pembayaran');
+        return $user->can('{{ Reorder }}');
     }
 }

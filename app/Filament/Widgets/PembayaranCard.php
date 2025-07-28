@@ -17,7 +17,9 @@ class PembayaranCard extends BaseWidget
     public static function getSort(): int
 {
     $user = auth()->user();
-
+    if(!$user) {
+        return 10;
+    }
     if ($user->hasRole('guru')) {
         return 10;
     }
